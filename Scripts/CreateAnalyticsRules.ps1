@@ -5,7 +5,7 @@ param(
 
 #Adding AzSentinel module
 Install-Module AzSentinel -Scope CurrentUser -Force
-Import-Module AzSentinel
+Import-Module AzSentinel -AllowClobber
 
 #Name of the Azure DevOps artifact
 $artifactName = "RulesFile"
