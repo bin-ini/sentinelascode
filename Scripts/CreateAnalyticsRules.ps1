@@ -4,7 +4,7 @@ param(
 )
 
 #Adding AzSentinel module
-Install-Module AzSentinel -Scope CurrentUser -Force
+Install-Module -AllowClobber AzSentinel -Scope CurrentUser -Force
 Import-Module AzSentinel -AllowClobber
 
 #Name of the Azure DevOps artifact
