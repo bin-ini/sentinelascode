@@ -8,10 +8,12 @@ param(
 Install-Module AzSentinel -Scope CurrentUser -Force
 Import-Module AzSentinel
 
-echo "Reached 2- ${env.PATH}"
+echo "Reached 2- ${PATH}"
 
 #Name of the Azure DevOps artifact
 $artifactName = "RulesFile"
+
+echo "Reached 2.1- ${artifactName}"
 
 #Build the full path for the analytics rule file
 $artifactPath = Join-Path $env:Pipeline_Workspace $artifactName 
