@@ -12,7 +12,7 @@ echo "Reached 2- ${PATH}"
 echo "Reached 2.0- $artifactName"
 
 #Name of the Azure DevOps artifact
-$artifactName = "RulesFile"
+$artifactName = "${RulesFile}"
 
 echo "Reached 2.1- ${artifactName}"
 
