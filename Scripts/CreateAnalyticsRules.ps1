@@ -17,6 +17,9 @@ echo "Reached 2.1- ${artifactName}"
 
 #Build the full path for the analytics rule file
 $artifactPath = Join-Path $env:Pipeline_Workspace $artifactName 
+
+echo "Reached 2.2- ${artifactPath}"
+
 $rulesFilePath = Join-Path $artifactPath $RulesFile
 
 echo "Reached 3- ${artifactPath}"
