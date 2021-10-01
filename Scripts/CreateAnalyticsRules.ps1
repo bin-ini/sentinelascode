@@ -9,6 +9,7 @@ Install-Module AzSentinel -Scope CurrentUser -Force
 Import-Module AzSentinel
 
 echo "Reached 2- ${PATH}"
+echo "Reached 2.0- $artifactName"
 
 #Name of the Azure DevOps artifact
 $artifactName = "RulesFile"
