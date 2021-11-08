@@ -28,6 +28,7 @@ echo "Reached 4- ${rulesFilePath}"
 
 try {
     echo "Reached 5- ${rulesFilePath}"
+    echo "Reached 6- ${Workspace}"
     Import-AzSentinelAlertRule -WorkspaceName $Workspace -SettingsFile $rulesFilePath
 }
 catch {
