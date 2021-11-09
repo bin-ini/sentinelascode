@@ -21,6 +21,10 @@ $artifactPath = Join-Path $env:Pipeline_Workspace $artifactName
 
 echo "Reached 2.2- ${artifactPath}"
 echo "Reached 2.3- ${Pipeline_Workspace}"
+echo "Reached 2.4- ${ResourceGroup}"
+echo "Reached 2.5- ${env.Pipeline_Workspace}"
+echo "Reached 2.6- ${env.ResourceGroup}"
+
 
 $rulesFilePath = Join-Path $artifactPath $RulesFile
 
