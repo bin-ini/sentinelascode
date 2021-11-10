@@ -1,6 +1,8 @@
 param(
     [Parameter(Mandatory=$true)]$Workspace,
+    [Parameter(Mandatory=$true)]$SubscriptionId,
     [Parameter(Mandatory=$true)]$RulesFile
+    
 )
  echo "Reached 1- ${env.PATH}"
 
