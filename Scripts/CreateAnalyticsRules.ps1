@@ -1,6 +1,5 @@
 param(
     [Parameter(Mandatory=$true)]$Workspace,
-    [Parameter(Mandatory=$true)]$SubscriptionId,
     [Parameter(Mandatory=$true)]$RulesFile
     
 )
