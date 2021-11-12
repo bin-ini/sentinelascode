@@ -6,7 +6,7 @@ param(
  echo "Reached 1- ${env.PATH}"
 
 #Adding AzSentinel module
-Install-Module AzSentinel -AllowClobber
+Install-Module AzSentinel -Scope CurrentUser -Force
 Import-Module AzSentinel
 
 echo "Reached 2- ${PATH}"
