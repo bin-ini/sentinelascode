@@ -7,7 +7,7 @@ param(
 
 #Adding AzSentinel module
 Install-Module AzSentinel -Scope CurrentUser -Force
-Import-Module AzSentinel -Force
+Import-Module AzSentinel -AllowClobber -Force
 
 echo "Reached 2- ${PATH}"
 echo "Reached 2.0- $artifactName"
