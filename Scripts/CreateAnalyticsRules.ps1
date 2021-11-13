@@ -1,9 +1,11 @@
 param(
     [Parameter(Mandatory=$true)]$Workspace,
-    [Parameter(Mandatory=$true)]$RulesFile
+    [Parameter(Mandatory=$true)]$RulesFile,
+    [Parameter(Mandatory=$true)]$SubscriptionId
     
 )
- echo "Reached 1- ${env.PATH}"
+echo "Reached 1- ${env.PATH}"
+Set-AzContext -Subscription $SubscriptionId
 
 #Adding AzSentinel module
 Install-Module AzSentinel -Scope CurrentUser -Force
