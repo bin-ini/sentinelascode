@@ -6,9 +6,6 @@ param(
  echo "Reached 1- ${env.PATH}"
 
 #Adding AzSentinel module
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
-Get-ExecutionPolicy -List
-
 Install-Module AzSentinel -Scope CurrentUser -Force
 Import-Module AzSentinel
 
