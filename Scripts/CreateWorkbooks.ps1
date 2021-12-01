@@ -10,6 +10,9 @@ Write-Host "Folder is: $($WorkbooksFolder)"
 $armTemplateFiles = Get-ChildItem -Path $WorkbooksFolder -Filter *.json
 
 echo "Reached 1.2- ${armTemplateFiles}"
+echo "WorkbooksFolder 1.2- ${WorkbooksFolder}"
+echo "Workspace 1.2- ${Workspace}"
+
 
 Write-Host "Files are: " $armTemplateFiles
 
