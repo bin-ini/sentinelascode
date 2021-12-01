@@ -9,9 +9,13 @@ Write-Host "Folder is: $($WorkbooksFolder)"
 
 $armTemplateFiles = Get-ChildItem -Path $WorkbooksFolder -Filter *.json
 
+echo "Reached 1.2- ${armTemplateFiles}"
+
 Write-Host "Files are: " $armTemplateFiles
 
 $workbookSourceId = "/subscriptions/$SubscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace"
+
+echo "Reached 2.2- ${workbookSourceId}"
 
 foreach ($armTemplate in $armTemplateFiles) {
     try {
