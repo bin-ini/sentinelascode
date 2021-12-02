@@ -1,7 +1,7 @@
 {
     "connectors": [
     {
-        "kind": "Office 365",
+        "kind": "Office365",
         "properties": {
             "subscriptionId": "subscriptionId",
             "dataTypes": {
@@ -12,7 +12,7 @@
         }
     },
     {
-        "kind": "Azure Activity",
+        "kind": "AzureActivity",
         "properties": {
             "linkedResourceId": "/subscriptions/subscriptionId/providers/microsoft.insights/eventtypes/management"
         }
