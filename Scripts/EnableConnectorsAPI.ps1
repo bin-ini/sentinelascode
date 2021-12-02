@@ -9,7 +9,7 @@ param(
 )
 
 #Name of the Azure DevOps artifact
-$artifactName = "ConnectorsFile"
+$artifactName = "Connectors"
 
 #Build the full path for the analytics rule file
 $artifactPath = Join-Path $env:Pipeline_Workspace $artifactName 
