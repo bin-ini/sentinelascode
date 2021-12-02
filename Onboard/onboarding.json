@@ -5,7 +5,7 @@
             "workspace": "SentinelBin"
         },
         {
-            "resourcegroup": "cloud-shell-storage-westeurope",
+            "resourcegroup": "sentinelcicd",
             "workspace": "testSentinelBin"
         }
     ]
