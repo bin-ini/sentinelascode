@@ -6,7 +6,7 @@ param (
 Install-Module AzSentinel -Scope CurrentUser -Force
 Import-Module AzSentinel
 
-$artifactName = "OnboardingFile"
+$artifactName = "Onboard"
 
 #Build the full path for the onboarding file
 $artifactPath = Join-Path $env:Pipeline_Workspace $artifactName 
