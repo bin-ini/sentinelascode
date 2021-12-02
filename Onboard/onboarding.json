@@ -1,12 +1,12 @@
 {
     "deployments": [
         {
-            "resourcegroup": "sentinel",
-            "workspace": "sorisentinel"
+            "resourcegroup": "cloud-shell-storage-westeurope",
+            "workspace": "SentinelBin"
         },
         {
-            "resourcegroup": "production",
-            "workspace": "testlasoricloud"
+            "resourcegroup": "cloud-shell-storage-westeurope",
+            "workspace": "testSentinelBin"
         }
     ]
 }
