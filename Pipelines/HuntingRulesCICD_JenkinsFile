@@ -1,0 +1,53 @@
+#!/usr/bin/env groovy
+
+pipeline{
+ agent any
+ stages {
+        stage('Code checkout from GITHUB') {
+            steps {
+               // Get some code from a GitHub repository      
+               checkout scm
+                echo "Successfully checkout code- ${env.PATH}"
+            }
+        }
+        stage('reading properties from properties file') {
+            steps {
+                // Use a script block to do custom scripting
+                script {
+                    def props = readProperties file: 'env_var.properties'
+                    env.Sentinel_Workspace = props.Sentinel_Workspace
+                    env.RulesFile = props.huntingRulesFile
+                    env.Pipeline_Workspace = "${env.WORKSPACE}"
+                   
+                   
+                    echo "Current Pipeline_Workspace is ${env.Pipeline_Workspace}"
+                    echo "Current Sentinel_Workspace is ${env.Sentinel_Workspace}"
+                }
+                echo "The Pipeline_Workspace  is ${env.Pipeline_Workspace}"
+            }
+        }
+        stage('deploy alert rules') {
+           steps {
+             withCredentials([azureServicePrincipal('diyadarshAzurePrincipal')]) {
+      
+                    pwsh ( returnStatus: true, script: "Connect-AzAccount -ServicePrincipal -Tenant ${AZURE_TENANT_ID} -Subscription ${AZURE_SUBSCRIPTION_ID}" )
+                    echo "3. called powershell script successfully"
+                    pwsh ( returnStatus: true, script: "&./Scripts/CreateHuntingRulesAPI.ps1 -Workspace ${env.Sentinel_Workspace} -RulesFile ${env.RulesFile}" )
+      
+             echo "called powershell script successfully"
+           }
+                       
+        }
+                         
+        }
+ }
+}
+
+def loadEnvironmentVariables(path){
+    def props = readProperties  file: path
+    keys= props.keySet()
+    for(key in keys) {
+        value = props["${key}"]
+        env."${key}" = "${value}"
+    }
+}
