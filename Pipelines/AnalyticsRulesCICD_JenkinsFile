@@ -3,11 +3,11 @@
 pipeline{
  agent any
  stages {
-        stage('Code checkout from GITHUB') {
+        stage('Source Code Checkout') {
             steps {
-                        // Get some code from a GitHub repository      
-                git 'https://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@github.com/bin-ini/sentinelascode.git'
-                echo "Successfully checkout code- ${env.PATH}"
+                // Get some code from a GitHub repository      
+                checkout scm
+                echo "Successfully checkout code"
             }
         }
         stage('reading properties from properties file') {
