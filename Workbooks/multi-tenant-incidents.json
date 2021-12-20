@@ -1,7 +1,7 @@
 {
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "workbookDisplayName": 
+    "workbookDisplayName": {
       "type": "string",
       "defaultValue": "Security Alerts multi-tenant",
       "metadata": {
