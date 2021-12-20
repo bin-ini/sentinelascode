@@ -1,6 +1,6 @@
 {
   "Scheduled": [
-    
+    {
       "displayName": "AlertRule01Test",
       "description": "",
       "severity": "Medium",
