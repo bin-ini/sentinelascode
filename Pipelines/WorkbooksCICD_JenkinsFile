@@ -1,0 +1,72 @@
+#!/usr/bin/env groovy
+
+pipeline{
+ agent any
+ stages {
+        stage('Code checkout from GITHUB') {
+            steps {
+                // Get some code from a GitHub repository      
+                checkout scm
+                echo "Successfully checkout code- ${env.PATH}"
+            }
+        }
+        stage('reading properties from properties file') {
+            steps {
+                // Use a script block to do custom scripting
+                script {
+                    def props = readProperties file: 'env_var.properties'
+                    env.Sentinel_Workspace = props.Sentinel_Workspace
+                    env.SubscriptionId = props.SubscriptionId
+                    env.ResourceGroup = props.ResourceGroup
+                    env.WorkbooksFolder = props.WorkbooksFolder
+                    env.Pipeline_Workspace = "${env.WORKSPACE}"
+                   
+                   
+                    echo "Current Pipeline_Workspace is ${env.Pipeline_Workspace}"
+                    echo "Current Sentinel_Workspace is ${env.Sentinel_Workspace}"
+                }
+                echo "The Pipeline_Workspace  is ${env.Pipeline_Workspace}"
+            }
+        }
+        stage('validate') {
+           steps {
+               script{
+                def files = findFiles(glob: "**/${env.WorkbooksFolder}/*.json")
+                echo "files - ${files}"
+                
+                for (int i = 0; i < files.size(); ++i) {
+                        validateInput("${files[i]}")   
+                        echo "validation successful for this file - ${files[i]}"
+                    }                
+                echo "validation successful-goes to next phase"
+              }
+            }
+        }
+        stage('deploy alert rules') {
+           steps {
+             withCredentials([azureServicePrincipal('diyadarshAzurePrincipal')]) {
+      
+                    pwsh ( returnStatus: true, script: "Connect-AzAccount -ServicePrincipal -Tenant ${AZURE_TENANT_ID} -Subscription ${AZURE_SUBSCRIPTION_ID}" )
+                    echo "3. called powershell script successfully"
+                    pwsh ( returnStatus: true, script: "&./Scripts/CreateWorkbooks.ps1 -SubscriptionId ${env.SubscriptionId} -ResourceGroup ${env.ResourceGroup} -Workspace ${env.Sentinel_Workspace} -WorkbooksFolder ${env.WorkbooksFolder}" )
+        
+             echo "called powershell script successfully"
+           }
+                       
+        }
+                         
+        }
+ }
+}
+
+//Function used to validate input files used during deployment
+//Input - String filenmae
+def validateInput(String filename){
+         echo "3. asked for validation"
+         def validationSucceeded  = pwsh ( returnStdout: true, script: "Get-Content ./${filename} -Raw | Test-Json" )
+         echo "validationSucceeded - ${validationSucceeded}"
+         
+         if(!validationSucceeded.toBoolean()){
+            error "JSON Validation Failed, this pipeline stops here!"
+         }
+}
