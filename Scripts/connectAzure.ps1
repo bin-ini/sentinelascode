@@ -1,19 +1,14 @@
-param(
-    [Parameter(Mandatory=$true)]$ApplicationId,
-    [Parameter(Mandatory=$true)]$TenantId, 
-    [Parameter(Mandatory=$true)]$Subscription,
-    [Parameter(Mandatory=$true)]$ClientSecret  
-)
-echo "Reached 1- ${AplicationId}"
-echo "Reached 2- ${TenantId}"
-echo "Reached 2- ${Subscription}"
-echo "Reached 3- ${ClientSecret}"
+
+echo "Reached 1- ${env.CLIENT_ID}"
+echo "Reached 2- ${env.TENANT_ID}"
+echo "Reached 2- ${env.CLIENT_SECRET}"
+echo "Reached 3- ${env.SUBS_ID}"
 
 
 try {
-    $azurePassword = ConvertTo-SecureString $ClientSecret -AsPlainText -Force
-    $psCred = New-Object System.Management.Automation.PSCredential($ApplicationId , $azurePassword)
-    Connect-AzAccount -Credential $psCred -TenantId $TenantId -Subscription $Subscription -ServicePrincipal 
+    $azurePassword = ConvertTo-SecureString ${env.CLIENT_SECRET} -AsPlainText -Force
+    $psCred = New-Object System.Management.Automation.PSCredential(${env.CLIENT_ID} , $azurePassword)
+    Connect-AzAccount -Credential $psCred -TenantId ${env.TENANT_ID} -Subscription ${env.SUBS_ID} -ServicePrincipal 
 }
 catch {
     echo "Reached 5"
