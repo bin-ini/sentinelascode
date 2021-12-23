@@ -17,5 +17,5 @@ catch {
     echo "Reached 5"
     $ErrorMessage = $_.Exception.Message
     echo "Reached 6 - $ErrorMessage"
-    Write-Error "Rule import failed with message: $ErrorMessage" 
+    Write-Error "Connection to Azure failed with message: $ErrorMessage" 
 }
