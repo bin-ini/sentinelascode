@@ -1,8 +1,5 @@
-param(
-    [Parameter(Mandatory=$true)]$Credentials
-)
-
 try {
+    $Credentials = Get-Credential
     $azurePassword = ConvertTo-SecureString ${Credentials.CLIENT_SECRET} -AsPlainText -Force
     $psCred = New-Object System.Management.Automation.PSCredential(${Credentials.CLIENT_ID} , $azurePassword)
     Connect-AzAccount -Credential $psCred -TenantId ${Credentials.TENANT_ID} -Subscription ${Credentials.SUBS_ID} -ServicePrincipal 
