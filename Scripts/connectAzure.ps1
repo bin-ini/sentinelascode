@@ -3,7 +3,8 @@ echo "SUBS_ID - ${env:SUBS_ID}, CLIENT_ID - ${env:CLIENT_ID}"
 try {
     $azurePassword = ConvertTo-SecureString ${env:CLIENT_SECRET} -AsPlainText -Force
     $psCred = New-Object System.Management.Automation.PSCredential(${env:CLIENT_ID} , $azurePassword)
-    Connect-AzAccount -Credential $psCred -TenantId ${env:TENANT_ID} -Subscription ${env:SUBS_ID} -ServicePrincipal 
+    Connect-AzAccount -Credential $psCred -TenantId ${env:TENANT_ID} -Subscription ${env:SUBS_ID} -ServicePrincipal
+    Disable-AzContextAutosave -Scope Process
 }
 catch {
     echo "Reached 5"
