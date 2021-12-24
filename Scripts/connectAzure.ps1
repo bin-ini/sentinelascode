@@ -1,11 +1,6 @@
-echo "SUBS_ID - ${env:SUBS_ID}, CLIENT_ID - ${env:CLIENT_ID}"
-
 try {
-    Disable-AzContextAutosave
     $azurePassword = ConvertTo-SecureString ${env:CLIENT_SECRET} -AsPlainText -Force
     $psCred = New-Object System.Management.Automation.PSCredential(${env:CLIENT_ID} , $azurePassword)
-    
-    Enable-AzContextAutosave
     Connect-AzAccount -Credential $psCred -TenantId ${env:TENANT_ID} -Subscription ${env:SUBS_ID} -ServicePrincipal
 }
 catch {
