@@ -53,8 +53,8 @@ foreach ($connector in $connectors.connectors) {
     
     echo "AzureSecurityCenter - ${connector.kind}"
     
-        # $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-03-01-preview"
-        $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2021-09-01-preview"
+        $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-01-01"
+        
         
         $connectorBody = ""
         $activityEnabled = $false
@@ -148,9 +148,9 @@ foreach ($connector in $connectors.connectors) {
         $guid = (New-Guid).Guid
         $etag = ""
         $connectorBody = ""
-        #$uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2020-01-01"
-        $uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2021-09-01-preview"
-
+        
+        $uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2020-01-01"
+        
         #Query for connected datasources and search AzureAdvancedThreatProtection
         try {
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
@@ -227,14 +227,16 @@ foreach ($connector in $connectors.connectors) {
         }
 
         # Enable or update AzureAdvancedThreatProtection with http put method
-        #$uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
-        $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2021-09-01-preview"
-
+        $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
+        
         echo "uri defender3 - $uri"
         echo "Headers defender3 - $Headers"
         
+        echo "TenantId - ${env:TenantId}"
+        
         $connectorBody | Out-String | Write-Host
         $Headers | Out-String | Write-Host
+        ${connectorBody.properties.tenantId} | Out-String | Write-Host
         
         try {
             $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
