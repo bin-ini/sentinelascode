@@ -118,14 +118,14 @@ foreach ($connector in $connectors.connectors) {
     }
 
     #AzureSecurityCenter connector
-    if ($connector.kind -eq "AzureSecurityCenter") {
+    if ($connector.kind -eq "MicrosoftDefenderforCloud") {
         $ascEnabled = $false
         $guid = (New-Guid).Guid
         $etag = ""
         $connectorBody = ""
         $uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2020-01-01"
 
-        #Query for connected datasources and search AzureSecurityCenter
+        #Query for connected datasources and search MicrosoftDefenderforCloud
         try {
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
             foreach ($value in $result.value){
@@ -188,7 +188,7 @@ foreach ($connector in $connectors.connectors) {
             }
         }
 
-        # Enable or update AzureSecurityCenter with http put method
+        # Enable or update MicrosoftDefenderforCloud with http put method
         $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
         try {
             $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
