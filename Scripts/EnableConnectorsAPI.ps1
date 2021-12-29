@@ -48,18 +48,20 @@ foreach ($connector in $connectors.connectors) {
     Write-Host "Processing alert rule: " -NoNewline 
     Write-Host "$($connector.kind)" -ForegroundColor Green
 
-    #AzureActivity connector
-    if ($connector.kind -eq "AzureActivity") {
+    #ASCDataConnector connector
+    if ($connector.kind -eq "ASCDataConnector") {
     
-    echo "AzureActivity - ${connector.kind}"
+    echo "ASCDataConnector - ${connector.kind}"
     
-        $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-03-01-preview"
+        # $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-03-01-preview"
+        $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2021-09-01-preview"
+        
         $connectorBody = ""
         $activityEnabled = $false
 
-        #Check if AzureActivity is already connected (there is no better way yet) [assuming there is only one AzureActivity from same subscription connected]
+        #Check if ASCDataConnector is already connected (there is no better way yet) [assuming there is only one ASCDataConnector from same subscription connected]
         try {
-            # AzureActivity is already connected, compose body with existing etag for update
+            # ASCDataConnector is already connected, compose body with existing etag for update
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
             
             echo "result - ${result}"
@@ -138,15 +140,16 @@ foreach ($connector in $connectors.connectors) {
     }
 
     #MicrosoftDefenderforCloud connector
-    if ($connector.kind -eq "MicrosoftDefenderforCloud") {
+    if ($connector.kind -eq "AATPDataConnector") {
     
-        echo "MicrosoftDefenderforCloud - ${connector.kind}"
+        echo "AATPDataConnector - ${connector.kind}"
             
         $ascEnabled = $false
         $guid = (New-Guid).Guid
         $etag = ""
         $connectorBody = ""
-        $uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2020-01-01"
+        #$uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2020-01-01"
+        $uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2021-09-01-preview"
 
         #Query for connected datasources and search MicrosoftDefenderforCloud
         try {
@@ -158,7 +161,7 @@ foreach ($connector in $connectors.connectors) {
             
             foreach ($value in $result.value){
                 # Check if ASC is already enabled (assuming there will be only one ASC per workspace)
-                if ($value.kind -eq "MicrosoftDefenderforCloud") {
+                if ($value.kind -eq "AATPDataConnector") {
                     Write-Host "Successfully queried data connctor $($value.kind) - already enabled"
                     Write-Verbose $value
                     $guid = $value.name
@@ -188,7 +191,8 @@ foreach ($connector in $connectors.connectors) {
                 type = "Microsoft.SecurityInsights/dataConnectors"
                 kind = $connector.kind
                 properties = @{
-                    subscriptionId = ${env:SubscriptionId}
+                    #subscriptionId = ${env:SubscriptionId}
+                    tenantId = ${env:TenantId}
                     dataTypes = @{
                         alerts = @{
                             state = "enabled"
@@ -212,7 +216,7 @@ foreach ($connector in $connectors.connectors) {
                 kind = $connector.kind
                 properties = @{
                     #subscriptionId = ${env:SubscriptionId}
-                    subscriptionId = "ced8b277-c949-468d-a7d9-36a7400803d3"
+                    tenantId = ${env:TenantId}
                     dataTypes = @{
                         alerts = @{
                             state = "enabled"
@@ -222,8 +226,9 @@ foreach ($connector in $connectors.connectors) {
             }
         }
 
-        # Enable or update MicrosoftDefenderforCloud with http put method
-        $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
+        # Enable or update AATPDataConnector with http put method
+        #$uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
+        $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2021-09-01-preview"
 
         echo "uri defender3 - $uri"
         echo "Headers defender3 - $Headers"
