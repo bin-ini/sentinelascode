@@ -211,7 +211,8 @@ foreach ($connector in $connectors.connectors) {
                 type = "Microsoft.SecurityInsights/dataConnectors"
                 kind = $connector.kind
                 properties = @{
-                    subscriptionId = ${env:SubscriptionId}
+                    #subscriptionId = ${env:SubscriptionId}
+                    subscriptionId = "ced8b277-c949-468d-a7d9-36a7400803d3"
                     dataTypes = @{
                         alerts = @{
                             state = "enabled"
@@ -228,7 +229,6 @@ foreach ($connector in $connectors.connectors) {
         echo "Headers defender3 - $Headers"
         
         $connectorBody | Out-String | Write-Host
-        ${connectorBody.properties} | Out-String | Write-Host
         $Headers | Out-String | Write-Host
         
         try {
