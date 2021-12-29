@@ -24,6 +24,8 @@ $body = "grant_type=client_credentials&client_id=${env:ClientId}&client_secret=$
 
 $Token = Invoke-RestMethod -Method Post -Uri $RequestAccessTokenUri -Body $body -ContentType 'application/x-www-form-urlencoded'
 
+echo "Token - ${Token}"
+
 Write-Host "Print Token" -ForegroundColor Green
 Write-Output $Token
 
@@ -42,6 +44,9 @@ foreach ($connector in $connectors.connectors) {
 
     #AzureActivity connector
     if ($connector.kind -eq "AzureActivity") {
+    
+    echo "AzureActivity - ${connector.kind}"
+    
         $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-03-01-preview"
         $connectorBody = ""
         $activityEnabled = $false
@@ -50,6 +55,9 @@ foreach ($connector in $connectors.connectors) {
         try {
             # AzureActivity is already connected, compose body with existing etag for update
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
+            
+            echo "result - ${result}"
+            
             Write-Host "Successfully queried data connctor ${connector.kind} - already enabled"
             Write-Verbose $result
             Write-Host "Updating data connector $($connector.kind)"
@@ -71,6 +79,9 @@ foreach ($connector in $connectors.connectors) {
         catch { 
             $errorReturn = $_
             #If return code is 404 we are assuming AzureActivity is not enabled yet
+
+            echo "Errorcode activity - $_.Exception.Response.StatusCode.value__"
+
             if ($_.Exception.Response.StatusCode.value__ = 404) {
                 Write-Host "Data connector $($connector.kind) is not enabled"  
                 Write-Verbose $_
@@ -112,6 +123,9 @@ foreach ($connector in $connectors.connectors) {
         catch {
             $errorReturn = $_
             $errorResult = ($errorReturn | ConvertFrom-Json ).error
+            
+            echo "Errorcode defender1 - $errorResult"
+            
             Write-Verbose $_.Exception.Message
             Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
         }  
@@ -119,6 +133,9 @@ foreach ($connector in $connectors.connectors) {
 
     #MicrosoftDefenderforCloud connector
     if ($connector.kind -eq "MicrosoftDefenderforCloud") {
+    
+        echo "MicrosoftDefenderforCloud - ${connector.kind}"
+            
         $ascEnabled = $false
         $guid = (New-Guid).Guid
         $etag = ""
@@ -128,6 +145,9 @@ foreach ($connector in $connectors.connectors) {
         #Query for connected datasources and search MicrosoftDefenderforCloud
         try {
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
+            
+            echo "result defender - ${result}"
+            
             foreach ($value in $result.value){
                 # Check if ASC is already enabled (assuming there will be only one ASC per workspace)
                 if ($value.kind -eq "MicrosoftDefenderforCloud") {
@@ -142,6 +162,7 @@ foreach ($connector in $connectors.connectors) {
         }
         catch {
             $errorReturn = $_
+            echo "Errorcode defender2 - $errorReturn"
         }
 
         if ($ascEnabled) {
@@ -203,6 +224,9 @@ foreach ($connector in $connectors.connectors) {
         catch {
             $errorReturn = $_
             $errorResult = ($errorReturn | ConvertFrom-Json ).error
+            
+            echo "Errorcode defender3 - $errorResult"
+            
             Write-Verbose $_
             Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
         }
@@ -252,6 +276,9 @@ try {
 catch {
     $errorReturn = $_
     $errorResult = ($errorReturn | ConvertFrom-Json ).error
+    
+    echo "Errorcode defender5 - $errorResult"
+    
     Write-Verbose $_
     Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
 }
