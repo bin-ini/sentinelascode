@@ -254,7 +254,8 @@ if ($connector.kind -eq "Office365") {
             Write-Verbose $_
             Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
         }
-    }
+}
+}
 }
 
 
