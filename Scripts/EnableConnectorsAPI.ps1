@@ -178,7 +178,9 @@ foreach ($connector in $connectors.connectors) {
             Write-Host "Updating data connector $($connector.kind)"
             Write-Verbose "Name: $guid"
             Write-Verbose "Etag: $etag"
-
+           
+           echo "ascEnabled defender3 - $ascEnabled"
+        
             $connectorBody = @{
                 id = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}"
                 name = $guid
@@ -186,7 +188,7 @@ foreach ($connector in $connectors.connectors) {
                 type = "Microsoft.SecurityInsights/dataConnectors"
                 kind = $connector.kind
                 properties = @{
-                    subscriptionId = $env:SubscriptionId
+                    subscriptionId = ${env:SubscriptionId}
                     dataTypes = @{
                         alerts = @{
                             state = "enabled"
@@ -222,6 +224,7 @@ foreach ($connector in $connectors.connectors) {
 
         echo "uri defender3 - $uri"
         echo "connectorBody defender3 - $connectorBody"
+        echo "Headers defender3 - $Headers"
 
         try {
             $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
