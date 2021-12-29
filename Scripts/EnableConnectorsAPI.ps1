@@ -228,12 +228,12 @@ foreach ($connector in $connectors.connectors) {
         echo "Headers defender3 - $Headers"
         
         $connectorBody | Out-String | Write-Host
+        ${connectorBody.properties} | Out-String | Write-Host
         $Headers | Out-String | Write-Host
         
         try {
-            # $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
-            $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -EnumsAsStrings)
-
+            $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
+            
             echo "result defender3 - $result"
             
             if ($ascEnabled) {
