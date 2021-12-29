@@ -40,15 +40,15 @@ foreach ($connector in $connectors.connectors) {
     Write-Host "Processing alert rule: " -NoNewline 
     Write-Host "$($connector.kind)" -ForegroundColor Green
 
-    #AzureActivityLog connector
-    if ($connector.kind -eq "AzureActivityLog") {
+    #AzureActivity connector
+    if ($connector.kind -eq "AzureActivity") {
         $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-03-01-preview"
         $connectorBody = ""
         $activityEnabled = $false
 
-        #Check if AzureActivityLog is already connected (there is no better way yet) [assuming there is only one AzureActivityLog from same subscription connected]
+        #Check if AzureActivity is already connected (there is no better way yet) [assuming there is only one AzureActivity from same subscription connected]
         try {
-            # AzureActivityLog is already connected, compose body with existing etag for update
+            # AzureActivity is already connected, compose body with existing etag for update
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
             Write-Host "Successfully queried data connctor ${connector.kind} - already enabled"
             Write-Verbose $result
@@ -70,7 +70,7 @@ foreach ($connector in $connectors.connectors) {
         }
         catch { 
             $errorReturn = $_
-            #If return code is 404 we are assuming AzureActivityLog is not enabled yet
+            #If return code is 404 we are assuming AzureActivity is not enabled yet
             if ($_.Exception.Response.StatusCode.value__ = 404) {
                 Write-Host "Data connector $($connector.kind) is not enabled"  
                 Write-Verbose $_
@@ -97,7 +97,7 @@ foreach ($connector in $connectors.connectors) {
             }
         }
 
-        #Enable or Update AzureActivityLog Connector with http puth method
+        #Enable or Update AzureActivity Connector with http puth method
         try {
             $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -EnumsAsStrings)
             if ($activityEnabled) {
