@@ -3,7 +3,7 @@
     {
         "kind": "AzureAdvancedThreatProtection",
         "properties": {
-            "tenantId": "tenantId",
+            "tenantId": "25236b22-27e6-4cfc-93c8-9b5fcafd0c70",
             "dataTypes": {
                 "alerts": {
                     "state": "Enabled"
@@ -14,7 +14,7 @@
     {
         "kind": "AzureSecurityCenter",
         "properties": {
-            "linkedResourceId": "/subscriptions/subscriptionId/providers/microsoft.insights/eventtypes/management"
+            "linkedResourceId": "/subscriptions/ced8b277-c949-468d-a7d9-36a7400803d3/providers/microsoft.insights/eventtypes/management"
         }
     }]
 }
