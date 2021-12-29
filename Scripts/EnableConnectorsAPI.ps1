@@ -48,25 +48,25 @@ foreach ($connector in $connectors.connectors) {
     Write-Host "Processing alert rule: " -NoNewline 
     Write-Host "$($connector.kind)" -ForegroundColor Green
 
-    #AzureSecurityCenter connector
-    if ($connector.kind -eq "AzureSecurityCenter") {
+    #Office365 connector
+    if ($connector.kind -eq "Office365") {
     
         $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2021-09-01-preview"
         
         
         $connectorBody = ""
-        $securityCenterEnabled = $false
+        $O365Enabled = $false
 
-        #Check if AzureSecurityCenter is already connected (there is no better way yet) [assuming there is only one AzureSecurityCenter from same subscription connected]
+        #Check if Office365 is already connected (there is no better way yet) [assuming there is only one Office365 from same subscription connected]
         try {
-            # AzureSecurityCenter is already connected, compose body with existing etag for update
+            # Office365 is already connected, compose body with existing etag for update
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
             
             Write-Host "Successfully queried data connctor ${connector.kind} - already enabled"
             Write-Verbose $result
             Write-Host "Updating data connector $($connector.kind)"
 
-            $securityCenterEnabled = $true
+            $O365Enabled = $true
             $connectorProperties = @{
                 linkedResourceId = "/subscriptions/${env:SubscriptionId}/providers/microsoft.insights/eventtypes/management"
             }        
@@ -82,14 +82,14 @@ foreach ($connector in $connectors.connectors) {
         }
         catch { 
             $errorReturn = $_
-            #If return code is 404 we are assuming AzureSecurityCenter is not enabled yet
+            #If return code is 404 we are assuming Office365 is not enabled yet
 
             if ($_.Exception.Response.StatusCode.value__ = 404) {
                 Write-Host "Data connector $($connector.kind) is not enabled"  
                 Write-Verbose $_
                 Write-Host "Enabling data connector $($connector.kind)"
 
-                $securityCenterEnabled = $false
+                $O365Enabled = $false
                 $connectorProperties = @{
                     linkedResourceId = "/subscriptions/${env:SubscriptionId}/providers/microsoft.insights/eventtypes/management"
                 }        
@@ -110,10 +110,10 @@ foreach ($connector in $connectors.connectors) {
             }
         }
 
-        #Enable or Update AzureActivity Connector with http puth method
+        #Enable or Update Office365 Connector with http put method
         try {
             $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -EnumsAsStrings)
-            if ($securityCenterEnabled) {
+            if ($O365Enabled) {
                 Write-Host "Successfully update data connector: $($connector.kind) with status: $($result.StatusDescription)"
             }
             else {
