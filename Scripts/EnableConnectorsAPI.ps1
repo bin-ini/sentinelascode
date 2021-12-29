@@ -225,21 +225,13 @@ foreach ($connector in $connectors.connectors) {
         $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
 
         echo "uri defender3 - $uri"
-        echo "connectorBody1 defender3 - ${connectorBody.id}"
-        echo "connectorBody2 defender3 - ${connectorBody.kind}"
-        echo "connectorBody defender3 - ${connectorBody.properties}"
         echo "Headers defender3 - $Headers"
-
+        
+        $connectorBody | Out-String | Write-Host
+        $Headers | Out-String | Write-Host
+        
         try {
-           
-            $jsonObj = $connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings
-          
-            echo "jsonObj defender3 - $jsonObj"
-          
-          
-            $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body jsonObj
-            
-            # $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
+            $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
 
             echo "result defender3 - $result"
             
