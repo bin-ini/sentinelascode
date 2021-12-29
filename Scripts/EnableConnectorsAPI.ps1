@@ -51,7 +51,7 @@ foreach ($connector in $connectors.connectors) {
     #AzureSecurityCenter connector
     if ($connector.kind -eq "AzureSecurityCenter") {
     
-        $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-03-01-preview"
+        $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2021-09-01-preview"
         
         
         $connectorBody = ""
