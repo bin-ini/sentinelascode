@@ -1,9 +1,9 @@
 {
     "connectors": [
     {
-        "kind": "MicrosoftDefenderforCloud",
+        "kind": "AATPDataConnector",
         "properties": {
-            "subscriptionId": "subscriptionId",
+            "tenantId": "tenantId",
             "dataTypes": {
                 "alerts": {
                     "state": "Enabled"
@@ -12,7 +12,7 @@
         }
     },
     {
-        "kind": "AzureActivity",
+        "kind": "ASCDataConnector",
         "properties": {
             "linkedResourceId": "/subscriptions/subscriptionId/providers/microsoft.insights/eventtypes/management"
         }
