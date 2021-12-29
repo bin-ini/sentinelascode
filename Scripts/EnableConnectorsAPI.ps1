@@ -48,88 +48,6 @@ foreach ($connector in $connectors.connectors) {
     Write-Host "Processing alert rule: " -NoNewline 
     Write-Host "$($connector.kind)" -ForegroundColor Green
 
-    #Office365 connector
-    if ($connector.kind -eq "Office365") {
-    
-        $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2021-09-01-preview"
-        
-        
-        $connectorBody = ""
-        $O365Enabled = $false
-
-        #Check if Office365 is already connected (there is no better way yet) [assuming there is only one Office365 from same subscription connected]
-        try {
-            # Office365 is already connected, compose body with existing etag for update
-            $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
-            
-            Write-Host "Successfully queried data connctor ${connector.kind} - already enabled"
-            Write-Verbose $result
-            Write-Host "Updating data connector $($connector.kind)"
-
-            $O365Enabled = $true
-            $connectorProperties = @{
-                linkedResourceId = "/subscriptions/${env:SubscriptionId}/providers/microsoft.insights/eventtypes/management"
-            }        
-            
-            $connectorBody = @{
-                kind = $result.kind
-                properties = $connectorProperties
-                id = $result.id
-                etag = $result.etag
-                name = $result.name
-                type = $result.type
-            }
-        }
-        catch { 
-            $errorReturn = $_
-            #If return code is 404 we are assuming Office365 is not enabled yet
-
-            if ($_.Exception.Response.StatusCode.value__ = 404) {
-                Write-Host "Data connector $($connector.kind) is not enabled"  
-                Write-Verbose $_
-                Write-Host "Enabling data connector $($connector.kind)"
-
-                $O365Enabled = $false
-                $connectorProperties = @{
-                    linkedResourceId = "/subscriptions/${env:SubscriptionId}/providers/microsoft.insights/eventtypes/management"
-                }        
-                
-                $connectorBody = @{
-                    kind = $connector.kind
-                    properties = $connectorProperties
-                    id = $connector.id
-                    name = $connector.name
-                    type = $connector.type
-                } 
-            }
-            #Any other eeror code is interpreted as error 
-            else {
-                $errorResult = ($errorReturn | ConvertFrom-Json ).error
-                Write-Verbose $_.Exception.Message
-                Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop           
-            }
-        }
-
-        #Enable or Update Office365 Connector with http put method
-        try {
-            $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -EnumsAsStrings)
-            if ($O365Enabled) {
-                Write-Host "Successfully update data connector: $($connector.kind) with status: $($result.StatusDescription)"
-            }
-            else {
-                Write-Host "Successfully enabled data connector: $($connector.kind) with status: $($result.StatusDescription)"
-            }
-             
-             Write-Verbose ($body.Properties | Format-List | Format-Table | Out-String)
-        }
-        catch {
-            $errorReturn = $_
-            $errorResult = ($errorReturn | ConvertFrom-Json ).error
-            Write-Verbose $_.Exception.Message
-            Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
-        }  
-    }
-
     #AzureAdvancedThreatProtection connector
     if ($connector.kind -eq "AzureAdvancedThreatProtection") {
         $aatpEnabled = $false
@@ -229,6 +147,116 @@ foreach ($connector in $connectors.connectors) {
         }
     }
 }
+#Office365 connector
+if ($connector.kind -eq "Office365") {
+        $O365Enabled = $false
+        $guid = (New-Guid).Guid
+        $etag = ""
+        $connectorBody = ""
+        
+        $uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2020-01-01"
+        
+        #Query for connected datasources and search Office365
+        try {
+            $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
+            
+            foreach ($value in $result.value){
+                # Check if O365Enabled is already enabled (assuming there will be only one aatpEnabled per workspace)
+                if ($value.kind -eq "Office365") {
+                    Write-Host "Successfully queried data connctor $($value.kind) - already enabled"
+                    Write-Verbose $value
+                    $guid = $value.name
+                    $etag = $value.etag
+                    $O365Enabled = $true
+                    break
+                }
+            }
+        }
+        catch {
+            $errorReturn = $_
+        }
+
+        if ($O365Enabled) {
+            # Compose body for connector update scenario
+            Write-Host "Updating data connector $($connector.kind)"
+            Write-Verbose "Name: $guid"
+            Write-Verbose "Etag: $etag"
+        
+            $connectorBody = @{
+                id = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}"
+                name = $guid
+                etag = $etag
+                type = "Microsoft.SecurityInsights/dataConnectors"
+                kind = $connector.kind
+                properties = @{
+                    tenantId = ${env:TenantId}
+                    dataTypes = @{
+                        sharePoint = @{
+                            state = "enabled"
+                        }
+                        exchange = @{
+                            state = "enabled"
+                        }
+                        teams = @{
+                            state = "enabled"
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            # Compose body for connector enable scenario
+            Write-Host "$($connector.kind) data connector is not enabled yet"
+            Write-Host "Enabling data connector $($connector.kind)"
+            Write-Verbose "Name: $guid"
+     
+            $connectorBody = @{
+                id = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}"
+                name = $guid
+                type = "Microsoft.SecurityInsights/dataConnectors"
+                kind = $connector.kind
+                properties = @{
+                    tenantId = ${env:TenantId}
+                    dataTypes = @{
+                        sharePoint = @{
+                            state = "enabled"
+                        }
+                        exchange = @{
+                            state = "enabled"
+                        }
+                        teams = @{
+                            state = "enabled"
+                        }
+                    }
+                }
+            }
+        }
+
+        # Enable or update Office365 with http put method
+        $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
+        
+        $connectorBody | Out-String | Write-Host
+        
+        try {
+            $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
+            
+            if ($O365Enabled) {
+                Write-Host "Successfully updated data connector: $($connector.kind) with status: $($result.StatusDescription)"
+            }
+            else {
+                Write-Host "Successfully enabled data connector: $($connector.kind) with status: $($result.StatusDescription)"
+            }
+            Write-Verbose ($body.Properties | Format-List | Format-Table | Out-String)
+        }
+        catch {
+            $errorReturn = $_
+            $errorResult = ($errorReturn | ConvertFrom-Json ).error
+            Write-Verbose $_
+            Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
+        }
+    }
+}
+
 
 # Azure Active Directory Audit/SignIn logs - requires special call and is therefore not connectors file
 # Be aware that you executing SPN needs Owner rights on tenant scope for this operation, can be added with following CLI
