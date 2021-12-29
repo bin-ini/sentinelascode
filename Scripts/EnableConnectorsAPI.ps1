@@ -49,9 +49,9 @@ foreach ($connector in $connectors.connectors) {
     Write-Host "$($connector.kind)" -ForegroundColor Green
 
     #ASCDataConnector connector
-    if ($connector.kind -eq "ASCDataConnector") {
+    if ($connector.kind -eq "AzureSecurityCenter") {
     
-    echo "ASCDataConnector - ${connector.kind}"
+    echo "AzureSecurityCenter - ${connector.kind}"
     
         # $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-03-01-preview"
         $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2021-09-01-preview"
@@ -59,7 +59,7 @@ foreach ($connector in $connectors.connectors) {
         $connectorBody = ""
         $activityEnabled = $false
 
-        #Check if ASCDataConnector is already connected (there is no better way yet) [assuming there is only one ASCDataConnector from same subscription connected]
+        #Check if AzureSecurityCenter is already connected (there is no better way yet) [assuming there is only one AzureSecurityCenter from same subscription connected]
         try {
             # ASCDataConnector is already connected, compose body with existing etag for update
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
@@ -86,7 +86,7 @@ foreach ($connector in $connectors.connectors) {
         }
         catch { 
             $errorReturn = $_
-            #If return code is 404 we are assuming AzureActivity is not enabled yet
+            #If return code is 404 we are assuming AzureSecurityCenter is not enabled yet
 
             echo "Errorcode activity - $_.Exception.Response.StatusCode.value__"
 
@@ -140,9 +140,9 @@ foreach ($connector in $connectors.connectors) {
     }
 
     #MicrosoftDefenderforCloud connector
-    if ($connector.kind -eq "AATPDataConnector") {
+    if ($connector.kind -eq "AzureAdvancedThreatProtection") {
     
-        echo "AATPDataConnector - ${connector.kind}"
+        echo "AzureAdvancedThreatProtection - ${connector.kind}"
             
         $ascEnabled = $false
         $guid = (New-Guid).Guid
@@ -151,7 +151,7 @@ foreach ($connector in $connectors.connectors) {
         #$uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2020-01-01"
         $uri = "$baseUri/providers/Microsoft.SecurityInsights/dataConnectors/?api-version=2021-09-01-preview"
 
-        #Query for connected datasources and search MicrosoftDefenderforCloud
+        #Query for connected datasources and search AzureAdvancedThreatProtection
         try {
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
             
@@ -161,7 +161,7 @@ foreach ($connector in $connectors.connectors) {
             
             foreach ($value in $result.value){
                 # Check if ASC is already enabled (assuming there will be only one ASC per workspace)
-                if ($value.kind -eq "AATPDataConnector") {
+                if ($value.kind -eq "AzureAdvancedThreatProtection") {
                     Write-Host "Successfully queried data connctor $($value.kind) - already enabled"
                     Write-Verbose $value
                     $guid = $value.name
@@ -226,7 +226,7 @@ foreach ($connector in $connectors.connectors) {
             }
         }
 
-        # Enable or update AATPDataConnector with http put method
+        # Enable or update AzureAdvancedThreatProtection with http put method
         #$uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
         $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2021-09-01-preview"
 
