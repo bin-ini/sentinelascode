@@ -146,9 +146,8 @@ foreach ($connector in $connectors.connectors) {
             Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
         }
     }
-}
-#Office365 connector
-if ($connector.kind -eq "Office365") {
+    #Office365 connector
+    if ($connector.kind -eq "Office365") {
         $O365Enabled = $false
         $guid = (New-Guid).Guid
         $etag = ""
@@ -254,10 +253,8 @@ if ($connector.kind -eq "Office365") {
             Write-Verbose $_
             Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
         }
+    }
 }
-}
-}
-
 
 # Azure Active Directory Audit/SignIn logs - requires special call and is therefore not connectors file
 # Be aware that you executing SPN needs Owner rights on tenant scope for this operation, can be added with following CLI
