@@ -17,18 +17,11 @@ $rulesFilePath = Join-Path $artifactPath $RulesFile
 #Getting all hunting rules from file
 $rules = Get-Content -Raw -Path $rulesFilePath | ConvertFrom-Json
 
-echo "Reached 2.2- ${artifactPath}"
-echo "Reached 2.3- ${rulesFilePath}"
-echo "Reached 2.4- ${env:ResourceGroup}"
-echo "Reached 2.5- ${env:Pipeline_Workspace}"
-
 foreach ($rule in $rules.hunting) {
     Write-Host "Processing hunting rule: " -NoNewline 
     Write-Host "$($rule.displayName)" -ForegroundColor Green
 
     $existingRule = Get-AzSentinelHuntingRule -WorkspaceName $Workspace -RuleName $rule.displayName -ErrorAction SilentlyContinue
-    
-    echo "Reached 6- ${existingRule}"
     
     if ($existingRule) {
         Write-Host "Hunting rule $($rule.displayName) already exists. Updating..."
