@@ -207,7 +207,7 @@ foreach ($connector in $connectors.connectors) {
                 type = "Microsoft.SecurityInsights/dataConnectors"
                 kind = $connector.kind
                 properties = @{
-                    subscriptionId = $env:SubscriptionId
+                    subscriptionId = ${env:SubscriptionId}
                     dataTypes = @{
                         alerts = @{
                             state = "enabled"
@@ -221,6 +221,7 @@ foreach ($connector in $connectors.connectors) {
         $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
 
         echo "uri defender3 - $uri"
+        echo "connectorBody defender3 - $connectorBody"
 
         try {
             $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
