@@ -202,6 +202,8 @@ foreach ($connector in $connectors.connectors) {
             Write-Host "$($connector.kind) data connector is not enabled yet"
             Write-Host "Enabling data connector $($connector.kind)"
             Write-Verbose "Name: $guid"
+            
+            echo "Not ascEnabled defender3"
 
             $connectorBody = @{
                 id = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}"
@@ -223,11 +225,21 @@ foreach ($connector in $connectors.connectors) {
         $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
 
         echo "uri defender3 - $uri"
-        echo "connectorBody defender3 - $connectorBody"
+        echo "connectorBody1 defender3 - ${connectorBody.id}"
+        echo "connectorBody2 defender3 - ${connectorBody.kind}"
+        echo "connectorBody defender3 - ${connectorBody.properties}"
         echo "Headers defender3 - $Headers"
 
         try {
-            $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
+           
+            $jsonObj = $connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings
+          
+            echo "jsonObj defender3 - $jsonObj"
+          
+          
+            $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body jsonObj
+            
+            # $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
 
             echo "result defender3 - $result"
             
