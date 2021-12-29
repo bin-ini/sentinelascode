@@ -1,8 +1,4 @@
 param(
-    [Parameter(Mandatory=$true)]$TenantId, 
-    [Parameter(Mandatory=$true)]$ClientId,
-    [Parameter(Mandatory=$true)]$ClientSecret,
-    [Parameter(Mandatory=$true)]$SubscriptionId, 
     [Parameter(Mandatory=$true)]$ResourceGroup,
     [Parameter(Mandatory=$true)]$Workspace,
     [Parameter(Mandatory=$true)]$ConnectorsFile
@@ -20,11 +16,11 @@ $connectorsFilePath = Join-Path $artifactPath $ConnectorsFile
 $Resource = "https://management.azure.com/"
 
 #Urls to be used for Sentinel API calls
-$baseUri = "https://management.azure.com/subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
+$baseUri = "https://management.azure.com/subscriptions/${env:SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 
-$RequestAccessTokenUri = "https://login.microsoftonline.com/$TenantId/oauth2/token"
+$RequestAccessTokenUri = "https://login.microsoftonline.com/${env:TenantId}/oauth2/token"
 
-$body = "grant_type=client_credentials&client_id=${ClientId}&client_secret=${ClientSecret}&resource=${Resource}"
+$body = "grant_type=client_credentials&client_id=${env:ClientId}&client_secret=${env:ClientSecret}&resource=${Resource}"
 
 $Token = Invoke-RestMethod -Method Post -Uri $RequestAccessTokenUri -Body $body -ContentType 'application/x-www-form-urlencoded'
 
@@ -46,7 +42,7 @@ foreach ($connector in $connectors.connectors) {
 
     #AzureActivityLog connector
     if ($connector.kind -eq "AzureActivityLog") {
-        $uri = "$baseUri/datasources/${SubscriptionId}?api-version=2020-03-01-preview"
+        $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-03-01-preview"
         $connectorBody = ""
         $activityEnabled = $false
 
@@ -60,7 +56,7 @@ foreach ($connector in $connectors.connectors) {
 
             $activityEnabled = $true
             $connectorProperties = @{
-                linkedResourceId = "/subscriptions/${SubscriptionId}/providers/microsoft.insights/eventtypes/management"
+                linkedResourceId = "/subscriptions/${env:SubscriptionId}/providers/microsoft.insights/eventtypes/management"
             }        
             
             $connectorBody = @{
@@ -82,7 +78,7 @@ foreach ($connector in $connectors.connectors) {
 
                 $activityEnabled = $false
                 $connectorProperties = @{
-                    linkedResourceId = "/subscriptions/${SubscriptionId}/providers/microsoft.insights/eventtypes/management"
+                    linkedResourceId = "/subscriptions/${env:SubscriptionId}/providers/microsoft.insights/eventtypes/management"
                 }        
                 
                 $connectorBody = @{
@@ -161,7 +157,7 @@ foreach ($connector in $connectors.connectors) {
                 type = "Microsoft.SecurityInsights/dataConnectors"
                 kind = $connector.kind
                 properties = @{
-                    subscriptionId = $SubscriptionId
+                    subscriptionId = $env:SubscriptionId
                     dataTypes = @{
                         alerts = @{
                             state = "enabled"
@@ -182,7 +178,7 @@ foreach ($connector in $connectors.connectors) {
                 type = "Microsoft.SecurityInsights/dataConnectors"
                 kind = $connector.kind
                 properties = @{
-                    subscriptionId = $SubscriptionId
+                    subscriptionId = $env:SubscriptionId
                     dataTypes = @{
                         alerts = @{
                             state = "enabled"
@@ -242,7 +238,7 @@ $connectorBody = @"
             }
         ],
         "metrics": [],
-        "workspaceId": "/subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
+        "workspaceId": "/subscriptions/${env:SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
     }
 }
 "@
