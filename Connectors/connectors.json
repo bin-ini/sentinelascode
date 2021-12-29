@@ -1,7 +1,7 @@
 {
     "connectors": [
     {
-        "kind": "AATPDataConnector",
+        "kind": "AzureAdvancedThreatProtection",
         "properties": {
             "tenantId": "tenantId",
             "dataTypes": {
@@ -12,7 +12,7 @@
         }
     },
     {
-        "kind": "ASCDataConnector",
+        "kind": "AzureSecurityCenter",
         "properties": {
             "linkedResourceId": "/subscriptions/subscriptionId/providers/microsoft.insights/eventtypes/management"
         }
