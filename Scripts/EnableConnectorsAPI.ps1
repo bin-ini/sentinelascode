@@ -48,29 +48,25 @@ foreach ($connector in $connectors.connectors) {
     Write-Host "Processing alert rule: " -NoNewline 
     Write-Host "$($connector.kind)" -ForegroundColor Green
 
-    #ASCDataConnector connector
+    #AzureSecurityCenter connector
     if ($connector.kind -eq "AzureSecurityCenter") {
-    
-    echo "AzureSecurityCenter - ${connector.kind}"
     
         $uri = "$baseUri/datasources/${env:SubscriptionId}?api-version=2020-01-01"
         
         
         $connectorBody = ""
-        $activityEnabled = $false
+        $securityCenterEnabled = $false
 
         #Check if AzureSecurityCenter is already connected (there is no better way yet) [assuming there is only one AzureSecurityCenter from same subscription connected]
         try {
-            # ASCDataConnector is already connected, compose body with existing etag for update
+            # AzureSecurityCenter is already connected, compose body with existing etag for update
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
-            
-            echo "result - ${result}"
             
             Write-Host "Successfully queried data connctor ${connector.kind} - already enabled"
             Write-Verbose $result
             Write-Host "Updating data connector $($connector.kind)"
 
-            $activityEnabled = $true
+            $securityCenterEnabled = $true
             $connectorProperties = @{
                 linkedResourceId = "/subscriptions/${env:SubscriptionId}/providers/microsoft.insights/eventtypes/management"
             }        
@@ -88,14 +84,12 @@ foreach ($connector in $connectors.connectors) {
             $errorReturn = $_
             #If return code is 404 we are assuming AzureSecurityCenter is not enabled yet
 
-            echo "Errorcode activity - $_.Exception.Response.StatusCode.value__"
-
             if ($_.Exception.Response.StatusCode.value__ = 404) {
                 Write-Host "Data connector $($connector.kind) is not enabled"  
                 Write-Verbose $_
                 Write-Host "Enabling data connector $($connector.kind)"
 
-                $activityEnabled = $false
+                $securityCenterEnabled = $false
                 $connectorProperties = @{
                     linkedResourceId = "/subscriptions/${env:SubscriptionId}/providers/microsoft.insights/eventtypes/management"
                 }        
@@ -119,7 +113,7 @@ foreach ($connector in $connectors.connectors) {
         #Enable or Update AzureActivity Connector with http puth method
         try {
             $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -EnumsAsStrings)
-            if ($activityEnabled) {
+            if ($securityCenterEnabled) {
                 Write-Host "Successfully update data connector: $($connector.kind) with status: $($result.StatusDescription)"
             }
             else {
@@ -131,20 +125,14 @@ foreach ($connector in $connectors.connectors) {
         catch {
             $errorReturn = $_
             $errorResult = ($errorReturn | ConvertFrom-Json ).error
-            
-            echo "Errorcode defender1 - $errorResult"
-            
             Write-Verbose $_.Exception.Message
             Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
         }  
     }
 
-    #MicrosoftDefenderforCloud connector
+    #AzureAdvancedThreatProtection connector
     if ($connector.kind -eq "AzureAdvancedThreatProtection") {
-    
-        echo "AzureAdvancedThreatProtection - ${connector.kind}"
-            
-        $ascEnabled = $false
+        $aatpEnabled = $false
         $guid = (New-Guid).Guid
         $etag = ""
         $connectorBody = ""
@@ -155,34 +143,29 @@ foreach ($connector in $connectors.connectors) {
         try {
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
             
-            echo "result defender2 - $result"            
-            
             echo "result defender - ${result}"
             
             foreach ($value in $result.value){
-                # Check if ASC is already enabled (assuming there will be only one ASC per workspace)
+                # Check if aatpEnabled is already enabled (assuming there will be only one aatpEnabled per workspace)
                 if ($value.kind -eq "AzureAdvancedThreatProtection") {
                     Write-Host "Successfully queried data connctor $($value.kind) - already enabled"
                     Write-Verbose $value
                     $guid = $value.name
                     $etag = $value.etag
-                    $ascEnabled = $true
+                    $aatpEnabled = $true
                     break
                 }
             }
         }
         catch {
             $errorReturn = $_
-            echo "Errorcode defender2 - $errorReturn"
         }
 
-        if ($ascEnabled) {
+        if ($aatpEnabled) {
             # Compose body for connector update scenario
             Write-Host "Updating data connector $($connector.kind)"
             Write-Verbose "Name: $guid"
             Write-Verbose "Etag: $etag"
-           
-           echo "ascEnabled defender3 - $ascEnabled"
         
             $connectorBody = @{
                 id = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}"
@@ -191,7 +174,6 @@ foreach ($connector in $connectors.connectors) {
                 type = "Microsoft.SecurityInsights/dataConnectors"
                 kind = $connector.kind
                 properties = @{
-                    #subscriptionId = ${env:SubscriptionId}
                     tenantId = ${env:TenantId}
                     dataTypes = @{
                         alerts = @{
@@ -206,16 +188,13 @@ foreach ($connector in $connectors.connectors) {
             Write-Host "$($connector.kind) data connector is not enabled yet"
             Write-Host "Enabling data connector $($connector.kind)"
             Write-Verbose "Name: $guid"
-            
-            echo "Not ascEnabled defender3"
-
+     
             $connectorBody = @{
                 id = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}"
                 name = $guid
                 type = "Microsoft.SecurityInsights/dataConnectors"
                 kind = $connector.kind
                 properties = @{
-                    #subscriptionId = ${env:SubscriptionId}
                     tenantId = ${env:TenantId}
                     dataTypes = @{
                         alerts = @{
@@ -229,21 +208,12 @@ foreach ($connector in $connectors.connectors) {
         # Enable or update AzureAdvancedThreatProtection with http put method
         $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
         
-        echo "uri defender3 - $uri"
-        echo "Headers defender3 - $Headers"
-        
-        echo "TenantId - ${env:TenantId}"
-        
         $connectorBody | Out-String | Write-Host
-        $Headers | Out-String | Write-Host
-        ${connectorBody.properties.tenantId} | Out-String | Write-Host
         
         try {
             $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
             
-            echo "result defender3 - $result"
-            
-            if ($ascEnabled) {
+            if ($aatpEnabled) {
                 Write-Host "Successfully updated data connector: $($connector.kind) with status: $($result.StatusDescription)"
             }
             else {
@@ -254,9 +224,6 @@ foreach ($connector in $connectors.connectors) {
         catch {
             $errorReturn = $_
             $errorResult = ($errorReturn | ConvertFrom-Json ).error
-            
-            echo "Errorcode defender3 - $errorResult"
-            
             Write-Verbose $_
             Write-Error "Unable to invoke webrequest with error message: $($errorResult.message)" -ErrorAction Stop
         }
