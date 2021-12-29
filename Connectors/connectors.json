@@ -1,7 +1,7 @@
 {
     "connectors": [
     {
-        "kind": "AzureSecurityCenter",
+        "kind": "MicrosoftDefenderforCloud",
         "properties": {
             "subscriptionId": "subscriptionId",
             "dataTypes": {
@@ -12,7 +12,7 @@
         }
     },
     {
-        "kind": "AzureActivityLog",
+        "kind": "AzureActivity",
         "properties": {
             "linkedResourceId": "/subscriptions/subscriptionId/providers/microsoft.insights/eventtypes/management"
         }
