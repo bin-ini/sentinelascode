@@ -18,9 +18,15 @@ $Resource = "https://management.azure.com/"
 #Urls to be used for Sentinel API calls
 $baseUri = "https://management.azure.com/subscriptions/${env:SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 
+echo "baseUri - ${baseUri}"
+
 $RequestAccessTokenUri = "https://login.microsoftonline.com/${env:TenantId}/oauth2/token"
 
+echo "RequestAccessTokenUri - ${RequestAccessTokenUri}"
+
 $body = "grant_type=client_credentials&client_id=${env:ClientId}&client_secret=${env:ClientSecret}&resource=${Resource}"
+
+echo "body - ${body}"
 
 $Token = Invoke-RestMethod -Method Post -Uri $RequestAccessTokenUri -Body $body -ContentType 'application/x-www-form-urlencoded'
 
