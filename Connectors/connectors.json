@@ -11,15 +11,21 @@
             }
         }
     },
-     {
-        "kind": "AzureSecurityCenter",
-        "properties": {
-            "subscriptionId": "subscriptionId",
-            "dataTypes": {
-                "alerts": {
-                    "state": "Enabled"
-                }
-            }
-        }
-    }]
+    {
+  "kind": "Office365",
+  "properties": {
+     "tenantId": "tenantId",
+    "dataTypes": {
+      "sharePoint": {
+        "state": "Enabled"
+      },
+      "exchange": {
+        "state": "Enabled"
+      },
+      "teams": {
+        "state": "Enabled"
+      }
+    }
+  }
+}]
 }
