@@ -117,7 +117,7 @@ foreach ($connector in $connectors.connectors) {
         }  
     }
 
-    #AzureSecurityCenter connector
+    #MicrosoftDefenderforCloud connector
     if ($connector.kind -eq "MicrosoftDefenderforCloud") {
         $ascEnabled = $false
         $guid = (New-Guid).Guid
@@ -130,7 +130,7 @@ foreach ($connector in $connectors.connectors) {
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
             foreach ($value in $result.value){
                 # Check if ASC is already enabled (assuming there will be only one ASC per workspace)
-                if ($value.kind -eq "AzureSecurityCenter") {
+                if ($value.kind -eq "MicrosoftDefenderforCloud") {
                     Write-Host "Successfully queried data connctor $($value.kind) - already enabled"
                     Write-Verbose $value
                     $guid = $value.name
