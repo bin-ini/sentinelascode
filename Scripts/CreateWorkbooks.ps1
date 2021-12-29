@@ -1,25 +1,16 @@
 param(
-    [Parameter(Mandatory=$true)]$SubscriptionId, 
     [Parameter(Mandatory=$true)]$ResourceGroup,
     [Parameter(Mandatory=$true)]$WorkbooksFolder,
     [Parameter(Mandatory=$true)]$Workspace
 )
-echo "WorkbooksFolder 1.2- ${WorkbooksFolder}"
-echo "Workspace 1.2- ${Workspace}"
 
 Write-Host "Folder is: $($WorkbooksFolder)"
 
 $armTemplateFiles = Get-ChildItem -Path $WorkbooksFolder -Filter *.json
 
-echo "Reached 1.2- ${armTemplateFiles}"
-
-
-
 Write-Host "Files are: " $armTemplateFiles
 
-$workbookSourceId = "/subscriptions/$SubscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace"
-
-echo "Reached 2.2- ${workbookSourceId}"
+$workbookSourceId = "/subscriptions/${env:SubscriptionId}/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace"
 
 foreach ($armTemplate in $armTemplateFiles) {
     try {
