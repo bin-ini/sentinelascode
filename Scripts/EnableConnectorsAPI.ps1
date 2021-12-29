@@ -152,6 +152,8 @@ foreach ($connector in $connectors.connectors) {
         try {
             $result = Invoke-webrequest -Uri $uri -Method Get -Headers $Headers | ConvertFrom-Json
             
+            echo "result defender2 - $result"            
+            
             echo "result defender - ${result}"
             
             foreach ($value in $result.value){
@@ -219,6 +221,9 @@ foreach ($connector in $connectors.connectors) {
         $uri = "${baseUri}/providers/Microsoft.SecurityInsights/dataConnectors/${guid}?api-version=2020-01-01"
         try {
             $result = Invoke-webrequest -Uri $uri -Method Put -Headers $Headers -Body ($connectorBody | ConvertTo-Json -Depth 4 -EnumsAsStrings)
+
+            echo "result defender3 - $result"
+            
             if ($ascEnabled) {
                 Write-Host "Successfully updated data connector: $($connector.kind) with status: $($result.StatusDescription)"
             }
