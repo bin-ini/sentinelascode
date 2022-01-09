@@ -263,8 +263,7 @@ $uri = "${Resource}providers/microsoft.aadiam/diagnosticSettings/AzureSentinel_$
 $connectorBody = @"
 
 {
-    # "id": "/providers/microsoft.aadiam/diagnosticSettings/AzureSentinel_${Workspace}",
-     "id": "/providers/microsoft.aadiam/providers/microsoft.insights/diagnosticSettings/{0}" -f "AzureSentinel_${Workspace}",
+    "id": "/providers/microsoft.aadiam/diagnosticSettings/AzureSentinel_${Workspace}",
     "name": "AzureSentinel_${Workspace}",
     "properties": {
         "logs": [
