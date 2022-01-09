@@ -2,36 +2,37 @@
 
 pipeline{
  agent any
+ 
  stages {
-        stage('Code checkout from GITHUB') {
+        stage('code checkout') {
             steps {
                 // Get some code from a GitHub repository      
                 checkout scm
-                echo "Successfully checkout code- ${env.PATH}"
+                echo "Successfully checkout code"
             }
         }
-        stage('reading properties from properties file') {
+        stage('setting up environment') {
             steps {
                 // Use a script block to do custom scripting
                 script {
+                 // setting up the necessary environment variables from Service Principal
+                    withCredentials([azureServicePrincipal('diyadarshAzurePrincipal')]) {
+                        env.SubscriptionId = "${AZURE_SUBSCRIPTION_ID}"
+                        env.ClientId = "${AZURE_CLIENT_ID}"
+                        env.ClientSecret = "${AZURE_CLIENT_SECRET}"
+                        env.TenantId = "${AZURE_TENANT_ID}"
+                    }
+                    //Read other environment specific properties from file, and set in environment when needed
                     def props = readProperties file: 'env_var.properties'
-                    env.Sentinel_Workspace = props.Sentinel_Workspace
-                    env.SubscriptionId = props.SubscriptionId
-                    env.ResourceGroup = props.ResourceGroup
                     env.WorkbooksFolder = props.WorkbooksFolder
                     env.Pipeline_Workspace = "${env.WORKSPACE}"
-                   
-                   
-                    echo "Current Pipeline_Workspace is ${env.Pipeline_Workspace}"
-                    echo "Current Sentinel_Workspace is ${env.Sentinel_Workspace}"
                 }
-                echo "The Pipeline_Workspace  is ${env.Pipeline_Workspace}"
             }
         }
         stage('validate') {
            steps {
                script{
-                def files = findFiles(glob: "**/${env.WorkbooksFolder}/*.json")
+                def files = findFiles(glob: "**/${WorkbooksFolder}/*.json")
                 echo "files - ${files}"
                 
                 for (int i = 0; i < files.size(); ++i) {
@@ -42,19 +43,24 @@ pipeline{
               }
             }
         }
-        stage('deploy alert rules') {
+        stage('connect to Azure') {
            steps {
-             withCredentials([azureServicePrincipal('diyadarshAzurePrincipal')]) {
-      
-                    pwsh ( returnStatus: true, script: "Connect-AzAccount -ServicePrincipal -Tenant ${AZURE_TENANT_ID} -Subscription ${AZURE_SUBSCRIPTION_ID}" )
-                    echo "3. called powershell script successfully"
-                    pwsh ( returnStatus: true, script: "&./Scripts/CreateWorkbooks.ps1 -SubscriptionId ${env.SubscriptionId} -ResourceGroup ${env.ResourceGroup} -Workspace ${env.Sentinel_Workspace} -WorkbooksFolder ${env.WorkbooksFolder}" )
-        
-             echo "called powershell script successfully"
+                    pwsh ( returnStatus: true, script: "&./Scripts/ConnectAzure.ps1")
+                    echo "Successfully connected to Azure"
            }
-                       
         }
-                         
+        stage('deploy') {
+           steps {
+                 pwsh ( returnStatus: true, script: "&./Scripts/CreateWorkbooks.ps1 -ResourceGroup ${ResourceGroup} -Workspace ${Sentinel_Workspace} -WorkbooksFolder ${WorkbooksFolder}")
+                 echo "Deployed Workbooks successfully"
+               }
+        }
+        stage('clean') {
+           steps {
+                   //Remove all account, subscription, and credential information for any powershell session.
+                    pwsh ( returnStatus: true, script: 'Clear-AzContext -Scope CurrentUser -Force')
+                    echo "Successfuly cleaned powershell session"
+           }
         }
  }
 }
@@ -62,7 +68,6 @@ pipeline{
 //Function used to validate input files used during deployment
 //Input - String filenmae
 def validateInput(String filename){
-         echo "3. asked for validation"
          def validationSucceeded  = pwsh ( returnStdout: true, script: "Get-Content ./${filename} -Raw | Test-Json" )
          echo "validationSucceeded - ${validationSucceeded}"
          
