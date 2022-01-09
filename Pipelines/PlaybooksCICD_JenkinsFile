@@ -1,0 +1,70 @@
+#!/usr/bin/env groovy
+
+pipeline{
+ agent any
+ stages {
+        stage('code checkout') {
+            steps {
+                // Get some code from a GitHub repository      
+                checkout scm
+                echo "Successfully checkout code"
+            }
+        }
+        stage('setting up environment') {
+            steps {
+                // Use a script block to do custom scripting
+                script {
+                 // setting up the necessary environment variables from Service Principal
+                    withCredentials([azureServicePrincipal('diyadarshAzurePrincipal')]) {
+                        env.SubscriptionId = "${AZURE_SUBSCRIPTION_ID}"
+                        env.ClientId = "${AZURE_CLIENT_ID}"
+                        env.ClientSecret = "${AZURE_CLIENT_SECRET}"
+                        env.TenantId = "${AZURE_TENANT_ID}"
+                    }
+                    //Read other environment specific properties from file, and set in environment when needed
+                    def props = readProperties file: 'env_var.properties'
+                    env.PlaybooksFolder  = props.PlaybooksFolder
+                    env.PlaybooksFile  = props.PlaybooksFile
+                    env.Pipeline_Workspace = "${env.WORKSPACE}"
+                }
+            }
+        }
+        stage('validate') {
+           steps {
+                    validateInput("${PlaybooksFolder}/${PlaybooksFile}")
+                    echo "validation successful-goes to next phase"
+            }
+        }
+        stage('connect to Azure') {
+           steps {
+                    pwsh ( returnStatus: true, script: "&./Scripts/ConnectAzure.ps1")
+                    echo "Successfully connected to Azure"
+           }
+        }
+        stage('deploy') {
+           steps {
+                 pwsh ( returnStatus: true, script: "&./Scripts/CreatePlaybooks.ps1 -ResourceGroup ${ResourceGroup} -PlaybooksFolder ${PlaybooksFolder}")
+                 echo "Deployed Playbooks successfully"
+               }
+        }
+        stage('clean') {
+           steps {
+                   //Remove all account, subscription, and credential information for any powershell session.
+                    pwsh ( returnStatus: true, script: 'Clear-AzContext -Scope CurrentUser -Force')
+                    echo "Successfuly cleaned powershell session"
+           }
+        }
+ }
+}
+
+
+//Function used to validate input files used during deployment
+//Input - String filenmae
+def validateInput(String filename){
+         def validationSucceeded  = pwsh ( returnStdout: true, script: "Get-Content ./${filename} -Raw | Test-Json" )
+         echo "validationSucceeded - ${validationSucceeded}"
+         
+         if(!validationSucceeded.toBoolean()){
+            error "JSON Validation Failed, this pipeline stops here!"
+         }
+}
