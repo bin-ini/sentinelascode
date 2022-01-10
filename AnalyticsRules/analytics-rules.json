@@ -1,7 +1,7 @@
 {
   "Scheduled": [
     {
-      "displayName": "AlertRule06Test",
+      "displayName": "AlertRule01Test",
       "description": "",
       "severity": "Medium",
       "enabled": true,
@@ -34,7 +34,7 @@
       }
     },
     {
-      "displayName": "AlertRule07Test",
+      "displayName": "AlertRule02Test",
       "description": "",
       "severity": "Medium",
       "enabled": true,
