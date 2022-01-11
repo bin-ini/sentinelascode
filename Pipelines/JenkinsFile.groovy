@@ -2,7 +2,7 @@ pipelineJob('SentinelCICDRelevantJob') {
 
   def repo = 'https://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@github.com/bin-ini/sentinelascode.git'
 
-  description("Pipeline for $repo")
+  description("Pipeline for Sentinelcode")
   
   parameters {
         stringParam('jenkinsFileSelected', '...', '...')
