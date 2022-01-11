@@ -45,6 +45,7 @@ pipeline{
                     }
                     else{
                         echo "No Jenkins file selected -${modified}"
+                        error "No Relevant File Selected which should trigger build, try manual approach"
                     }
                        build job: 'SentinelParametrizedJobGenerator', parameters: [[$class: 'StringParameterValue', name: 'jenkinsFileSelected', value: "${jenkinsFileSelected}"]]
   
