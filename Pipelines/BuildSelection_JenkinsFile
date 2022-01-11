@@ -1,0 +1,57 @@
+#!/usr/bin/env groovy
+
+def jenkinsFileSelected
+def jenkinsFile
+
+pipeline{
+ agent any
+  triggers {
+    GenericTrigger(
+     genericVariables: [
+      [key: 'modified', value:'$.commits[0].modified[0]']
+     ],
+     causeString: 'Triggered on $modified',
+     token: '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',
+     tokenCredentialId: '',
+     printContributedVariables: true,
+     printPostContent: true,
+     silentResponse: false,
+    )
+  }
+ stages {
+        stage('Build Selection') {
+            steps {
+                // Use a script block to do custom scripting
+                script {
+                    echo "modifiedChanges- ${modified}"
+
+                    if(null!="${modified}" && "${modified}".toLowerCase().contains('analytics')){
+                        jenkinsFileSelected = "Pipelines/AnalyticsRulesCICD_JenkinsFile"
+                    }
+                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('hunting')){
+                        jenkinsFileSelected = "Pipelines/HuntingRulesCICD_JenkinsFile"
+                    }
+                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('onboarding')){
+                        jenkinsFileSelected = "Pipelines/OnboardingCICD_JenkinsFile"
+                    }
+                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('playbooks')){
+                        jenkinsFileSelected = "Pipelines/PlaybooksCICD_JenkinsFile"
+                    }
+                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('workbooks')){
+                        jenkinsFileSelected = "Pipelines/WorkbooksCICD_JenkinsFile"
+                    }
+                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('connectors')){
+                        jenkinsFileSelected = "Pipelines/ConnectorsCICD_JenkinsFile"
+                    }
+                    else{
+                        echo "No Jenkins file selected -${modified}"
+                    }
+                       build job: 'SentinelParametrizedJobGenerator', parameters: [[$class: 'StringParameterValue', name: 'jenkinsFileSelected', value: "${jenkinsFileSelected}"]]
+  
+             }
+            }
+        }
+    }
+}
+
+
