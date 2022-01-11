@@ -34,7 +34,7 @@
       }
     },
     {
-      "displayName": "AlertRule03Test",
+      "displayName": "AlertRule02Test",
       "description": "",
       "severity": "Medium",
       "enabled": true,
