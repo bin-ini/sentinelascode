@@ -1,8 +1,5 @@
 #!/usr/bin/env groovy
 
-def jenkinsFileSelected
-def jenkinsFile
-
 pipeline{
  agent any
   triggers {
@@ -23,32 +20,7 @@ pipeline{
             steps {
                 // Use a script block to do custom scripting
                 script {
-                    echo "modifiedChanges- ${modified}"
-
-                    if(null!="${modified}" && "${modified}".toLowerCase().contains('analytics')){
-                        jenkinsFileSelected = "Pipelines/AnalyticsRulesCICD_JenkinsFile"
-                    }
-                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('hunting')){
-                        jenkinsFileSelected = "Pipelines/HuntingRulesCICD_JenkinsFile"
-                    }
-                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('onboarding')){
-                        jenkinsFileSelected = "Pipelines/OnboardingCICD_JenkinsFile"
-                    }
-                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('playbooks')){
-                        jenkinsFileSelected = "Pipelines/PlaybooksCICD_JenkinsFile"
-                    }
-                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('workbooks')){
-                        jenkinsFileSelected = "Pipelines/WorkbooksCICD_JenkinsFile"
-                    }
-                    else if (null!="${modified}" && "${modified}".toLowerCase().contains('connectors')){
-                        jenkinsFileSelected = "Pipelines/ConnectorsCICD_JenkinsFile"
-                    }
-                    else{
-                        echo "No Jenkins file selected -${modified}"
-                        error "No Relevant File Selected which should trigger build, try manual approach"
-                    }
-                       build job: 'SentinelParametrizedJobGenerator', parameters: [[$class: 'StringParameterValue', name: 'jenkinsFileSelected', value: "${jenkinsFileSelected}"]]
-  
+                    decideBuild ("${modified}")
              }
             }
         }
@@ -56,3 +28,43 @@ pipeline{
 }
 
 
+//Function which takes String input parameter, and decides the relevant build to trigger
+//Input - String filenmae
+// Output - Triggers a DSL Job
+// A core rule engine implementation - This can be advanced to define more complex scenarios
+// This should be scene as a general direction to decide your build filter
+
+def decideBuild(String modifications){
+    def jenkinsFileSelected
+                    echo "modifiedChanges-${modifications}"
+                    if(null=="${modifications}"){
+                         error "No Relevant File Selected which should trigger build- something went wrong"
+                    }
+
+                    if("${modifications}".toLowerCase().contains('analytics')){
+                        jenkinsFileSelected = "Pipelines/AnalyticsRulesCICD_JenkinsFile"
+                    }
+                    else if ("${modifications}".toLowerCase().contains('hunting')){
+                        jenkinsFileSelected = "Pipelines/HuntingRulesCICD_JenkinsFile"
+                    }
+                    else if ("${modifications}".toLowerCase().contains('onboarding')){
+                        jenkinsFileSelected = "Pipelines/OnboardingCICD_JenkinsFile"
+                    }
+                    else if ("${modifications}".toLowerCase().contains('playbooks')){
+                        jenkinsFileSelected = "Pipelines/PlaybooksCICD_JenkinsFile"
+                    }
+                    else if ("${modifications}".toLowerCase().contains('workbooks')){
+                        jenkinsFileSelected = "Pipelines/WorkbooksCICD_JenkinsFile"
+                    }
+                    else if ("${modifications}".toLowerCase().contains('connectors')){
+                        jenkinsFileSelected = "Pipelines/ConnectorsCICD_JenkinsFile"
+                    }
+                    else{
+                        echo "No Jenkins file selected -${modifications}"
+                        currentBuild.result = 'ABORTED'
+                        error "No Relevant File Selected which should trigger build, try manual approach"
+                    }
+                    
+                    //trigger a DSL job with specific pipeline input which would be required to run the specific job
+                    build job: 'SentinelParametrizedJobGenerator', parameters: [[$class: 'StringParameterValue', name: 'jenkinsFileSelected', value: "${jenkinsFileSelected}"]]
+}
