@@ -29,8 +29,9 @@ pipeline{
                 
                 //Comment below two lines when working with script copied locally in jenkins
                 checkout scm
-                repositoryUrl = scm.userRemoteConfigs[0].url 
-                    
+                script{
+                   repositoryUrl = scm.userRemoteConfigs[0].url 
+                }
                 echo "Successfully checkout code"
             }
         }
