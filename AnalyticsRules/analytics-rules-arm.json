@@ -105,7 +105,9 @@
             }
         },
        {
+               "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
                "kind": "MLBehaviorAnalytics",
+               "apiVersion": "2021-03-01-preview",           
                "properties": {
                "displayName": "(Preview) Anomalous SSH Login Detection",
                "alertRuleTemplateName": "fa118b98-de46-4e94-87f9-8e6d5060b60b",
@@ -113,7 +115,9 @@
                }
        },
        {
+               "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
                "kind": "Fusion",
+               "apiVersion": "2021-03-01-preview",           
                "properties": {
                "displayName": "Advanced Multistage Attack Detection",
                "alertRuleTemplateName": "f71aba3d-28fb-450b-b192-4e76a83015c8",
@@ -121,7 +125,9 @@
                }
        },
        {
+               "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
                "kind": "MicrosoftSecurityIncidentCreation",
+               "apiVersion": "2021-03-01-preview",           
                "properties": {
                "displayName": "Create incidents based on Azure Active Directory Identity Protection alerts",
                "description": "Create incidents based on all alerts generated in Azure Active Directory Identity Protection",
