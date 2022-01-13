@@ -9,7 +9,7 @@ pipelineJob('SentinelDynamicPipelineRunner') {
 
     definition {
             cps {
-                script(readFileFromWorkspace("../Pipelines/${jenkinsFileSelected}"))
+                script(readFileFromWorkspace("../${jenkinsFileSelected}"))
                 sandbox()
             }
         }
