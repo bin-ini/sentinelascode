@@ -19,6 +19,7 @@ pipeline{
         stage('code checkout') {
             steps {
                 // Get some code from a GitHub repository      
+                //git 'https://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@github.com/bin-ini/sentinelascode.git'
                 checkout scm
                 echo "Successfully checkout code"
             }
@@ -76,14 +77,16 @@ def decideBuild(String modifications){
                     }
 
                     //provide owner permission to the specific files so that pipelines can be run as part of the newly created Job
-                    pwsh 'ICACLS "./Jobs/JenkinsFile.groovy" /setowner "administrator"'
+                    pwsh 'ICACLS "./Jobs/PipelineJob.groovy" /setowner "administrator"'
+                    
+                    def repositoryUrl = scm.userRemoteConfigs[0].url 
+                    echo "repositoryUrl - ${repositoryUrl}"
                     
                     //Creating a parametrized Job, with dynamic build pipeline
-                    
-                    jobDsl scriptText: 'job("SentinelAutoParametrizedJobGenerator")'
-                    jobDsl targets: "./Jobs/JenkinsFile.groovy",
+                    jobDsl targets: "./Jobs/PipelineJob.groovy",
                            removedJobAction: 'DELETE',
                            removedViewAction: 'DELETE',
                            //lookupStrategy: 'SEED_JOB',
-                           additionalParameters: [jenkinsFileSelected: "${jenkinsFileSelected}"]                    
+                           additionalParameters: [jenkinsFileSelected: "${jenkinsFileSelected}"]                                
+                           
 }
