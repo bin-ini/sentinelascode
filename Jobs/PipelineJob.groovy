@@ -1,9 +1,9 @@
 pipelineJob('SentinelDynamicPipelineRunner') {
 
-    def repo = 'https://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@github.com/bin-ini/sentinelascode.git'
+    //def repositoryUrl = 'https://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@github.com/bin-ini/sentinelascode.git'
 
     parameters {
-            stringParam('jenkinsFileSelected', '...', '...')
+            stringParam('jenkinsFileSelected', 'repositoryUrl')
         }
         
    description("Placeholder Job for running the dynamic pipelines")
@@ -13,7 +13,7 @@ pipelineJob('SentinelDynamicPipelineRunner') {
         cpsScm {
               scm {
                 git {
-                  remote { url(repo) }
+                  remote { url("${repositoryUrl}") }
                   branches('master')
                   scriptPath("${jenkinsFileSelected}")
                   extensions { }  // required as otherwise it may try to tag the repo, which you may not want
