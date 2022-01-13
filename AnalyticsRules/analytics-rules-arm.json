@@ -105,7 +105,7 @@
             }
         },
        {
-               "name": "[concat(parameters('workspace'),'SSH Login Detection')]",
+               "name": "SSH Login Detection",
                "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "MLBehaviorAnalytics",
                "apiVersion": "2021-03-01-preview",           
@@ -116,7 +116,7 @@
                }
        },
        {
-               "name": "[concat(parameters('workspace'),'Multistage Attack')]",               
+               "name": "Multistage Attack",               
                "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "Fusion",
                "apiVersion": "2021-03-01-preview",           
@@ -127,7 +127,7 @@
                }
        },
        {
-               "name": "[concat(parameters('workspace'),'Identity Protection')]",
+               "name": "Identity Protection",
                "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "MicrosoftSecurityIncidentCreation",
                "apiVersion": "2021-03-01-preview",           
