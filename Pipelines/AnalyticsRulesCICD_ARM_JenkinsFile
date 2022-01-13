@@ -8,8 +8,7 @@ pipeline{
                 // Get some code from a GitHub repository   
                 
                 // UnComment below two lines when working with script copied locally in jenkins, use relevant vaule of github token
-                //def repositoryUrl = 'https://<token>@github.com/bin-ini/sentinelascode.git'
-                //git "${repositoryUrl}"
+                //git 'https://<token>@github.com/bin-ini/sentinelascode.git'
                 
                 //Comment below two lines when working with script copied locally in jenkins
                 checkout scm
