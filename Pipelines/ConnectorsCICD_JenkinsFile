@@ -44,7 +44,6 @@ pipeline{
         stage('deploy') {
            steps {
                  pwsh ( returnStatus: true, script: "&./Scripts/EnableConnectorsAPI.ps1 -ResourceGroup ${ResourceGroup} -Workspace ${Sentinel_Workspace} -ConnectorsFile ${ConnectorsFile}")
-                 echo "Deployed Connectors successfully"
                }
         }
         stage('clean') {
