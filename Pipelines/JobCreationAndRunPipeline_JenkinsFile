@@ -80,13 +80,12 @@ def decideBuild(String modifications){
                     pwsh 'ICACLS "./Jobs/PipelineJob.groovy" /setowner "administrator"'
                     
                     def repositoryUrl = scm.userRemoteConfigs[0].url 
-                    echo "repositoryUrl - ${repositoryUrl}"
                     
                     //Creating a parametrized Job, with dynamic build pipeline
                     jobDsl targets: "./Jobs/PipelineJob.groovy",
                            removedJobAction: 'DELETE',
                            removedViewAction: 'DELETE',
                            //lookupStrategy: 'SEED_JOB',
-                           additionalParameters: [jenkinsFileSelected: "${jenkinsFileSelected}"]                                
+                           additionalParameters: [jenkinsFileSelected: "${jenkinsFileSelected}", repositoryUrl:"${repositoryUrl}"]                                
                            
 }
