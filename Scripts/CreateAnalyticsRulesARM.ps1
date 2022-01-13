@@ -5,7 +5,7 @@ param(
 
 Write-Host "Folder is: $($AnalyticsRulesFolder)"
 
-$armTemplateFiles = Get-ChildItem -Path $AnalyticsRulesFolder -Filter *.json
+$armTemplateFiles = Get-ChildItem -Path $AnalyticsRulesFolder -Filter *arm.json
 
 Write-Host "Files are: " $armTemplateFiles
 
@@ -15,6 +15,6 @@ foreach ($armTemplate in $armTemplateFiles) {
     }
     catch {
         $ErrorMessage = $_.Exception.Message
-        Write-Error Analytics Rules deployment failed with message: $ErrorMessage" 
+        Write-Error "Analytics Rules deployment failed with message: $ErrorMessage" 
     }
 }
