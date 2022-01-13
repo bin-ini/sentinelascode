@@ -5,7 +5,12 @@ pipeline{
  stages {
         stage('code checkout') {
             steps {
-                // Get some code from a GitHub repository      
+                // Get some code from a GitHub repository    
+                // UnComment below two lines when working with script copied locally in jenkins, use relevant vaule of github token
+                //def repositoryUrl = 'https://<token>@github.com/bin-ini/sentinelascode.git'
+                //git "${repositoryUrl}"
+                
+                //Comment below two lines when working with script copied locally in jenkins
                 checkout scm
                 echo "Successfully checkout code"
             }
