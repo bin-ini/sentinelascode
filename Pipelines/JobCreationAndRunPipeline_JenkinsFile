@@ -23,7 +23,7 @@ pipeline{
             steps {
                 // Get some code from a GitHub repository      
               
-                // UnComment below two lines when working with script copied locally in jenkins
+                // UnComment below two lines when working with script copied locally in jenkins, use the relevant value of github token
                 //repositoryUrl = 'https://<token>@github.com/bin-ini/sentinelascode.git'
                 //git "${repositoryUrl}"
                 
