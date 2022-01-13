@@ -62,7 +62,7 @@
             "kind": "Scheduled",
             "apiVersion": "2021-03-01-preview",
             "properties": {
-                "displayName": "AlertRule03Test",
+                "displayName": "AlertRule02Test",
                 "description": "RuleDescription",
                 "severity": "Medium",
                 "enabled": true,
