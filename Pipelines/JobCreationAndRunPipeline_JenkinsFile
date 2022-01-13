@@ -1,5 +1,8 @@
 #!/usr/bin/env groovy
 
+//global variables
+def repositoryUrl 
+
 pipeline{
  agent any
   triggers {
@@ -8,7 +11,7 @@ pipeline{
       [key: 'modified', value:'$.commits[0].modified[0]']
      ],
      causeString: 'Triggered on $modified',
-     token: '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',
+     token: "${env.Webhook_Token}",
      tokenCredentialId: '',
      printContributedVariables: true,
      printPostContent: true,
@@ -19,8 +22,15 @@ pipeline{
         stage('code checkout') {
             steps {
                 // Get some code from a GitHub repository      
-                //git 'https://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@github.com/bin-ini/sentinelascode.git'
+              
+                // UnComment below two lines when working with script copied locally in jenkins
+                //repositoryUrl = 'https://<token>@github.com/bin-ini/sentinelascode.git'
+                //git "${repositoryUrl}"
+                
+                //Comment below two lines when working with script copied locally in jenkins
                 checkout scm
+                repositoryUrl = scm.userRemoteConfigs[0].url 
+                    
                 echo "Successfully checkout code"
             }
         }
@@ -78,8 +88,6 @@ def decideBuild(String modifications){
 
                     //provide owner permission to the specific files so that pipelines can be run as part of the newly created Job
                     pwsh 'ICACLS "./Jobs/PipelineJob.groovy" /setowner "administrator"'
-                    
-                    def repositoryUrl = scm.userRemoteConfigs[0].url 
                     
                     //Creating a parametrized Job, with dynamic build pipeline
                     jobDsl targets: "./Jobs/PipelineJob.groovy",
