@@ -38,7 +38,7 @@ pipeline{
         stage('Build Selection') {
             steps {
                 // Use a script block to do custom scripting
-                    decideBuild ("${modified}")
+                decideBuild ("${modified}", "${repositoryUrl}")
             }
         }
     }
@@ -51,7 +51,7 @@ pipeline{
 // A core rule engine implementation - This can be advanced to define more complex scenarios
 // This should be scene as a general direction to decide your build filter
 
-def decideBuild(String modifications){
+def decideBuild(String modifications, String repositoryUrl ){
     def jenkinsFileSelected
                     echo "modifiedChanges-${modifications}"
                     if(null=="${modifications}"){
@@ -90,12 +90,10 @@ def decideBuild(String modifications){
                     //provide owner permission to the specific files so that pipelines can be run as part of the newly created Job
                     pwsh 'ICACLS "./Jobs/PipelineJob.groovy" /setowner "administrator"'
                     
-                   script{
                     //Creating a parametrized Job, with dynamic build pipeline
                        jobDsl targets: "./Jobs/PipelineJob.groovy",
                               removedJobAction: 'DELETE',
                               removedViewAction: 'DELETE',
                               //lookupStrategy: 'SEED_JOB',
                               additionalParameters: [jenkinsFileSelected: "${jenkinsFileSelected}", repositoryUrl:"${repositoryUrl}"]        
-                   }
 }
