@@ -1,4 +1,5 @@
 param(
+    [Parameter(Mandatory=$true)]$Workspace,
     [Parameter(Mandatory=$true)]$resourceGroup,
     [Parameter(Mandatory=$true)]$AnalyticsRulesFolder
 )
@@ -11,7 +12,7 @@ Write-Host "Files are: " $armTemplateFiles
 
 foreach ($armTemplate in $armTemplateFiles) {
     try {
-        New-AzResourceGroupDeployment -ResourceGroupName $resourceGroup -TemplateFile $armTemplate 
+        New-AzResourceGroupDeployment -Workspace $Workspace -ResourceGroupName $resourceGroup -TemplateFile $armTemplate 
     }
     catch {
         $ErrorMessage = $_.Exception.Message
