@@ -137,7 +137,6 @@
                "properties": {
                "displayName": "Create incidents based on Azure Active Directory Identity Protection alerts",
                "description": "Create incidents based on all alerts generated in Azure Active Directory Identity Protection",
-               "alertRuleTemplateName": "f81aba3d-28fb-450b-b192-4e76a83015c8",
                "enabled": true,
                "productFilter": "Azure Active Directory Identity Protection",
                "severitiesFilter": [
