@@ -105,6 +105,7 @@
             }
         },
        {
+               "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/7d7c178b-a95e-4def-825c-1dfa88beb97f')]",
                "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "MLBehaviorAnalytics",
                "apiVersion": "2021-03-01-preview",           
@@ -115,6 +116,7 @@
                }
        },
        {
+               "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/8d7c178b-a95e-4def-825c-1dfa88beb97f')]",               
                "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "Fusion",
                "apiVersion": "2021-03-01-preview",           
@@ -125,6 +127,7 @@
                }
        },
        {
+               "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/9d7c178b-a95e-4def-825c-1dfa88beb97f')]",
                "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "MicrosoftSecurityIncidentCreation",
                "apiVersion": "2021-03-01-preview",           
