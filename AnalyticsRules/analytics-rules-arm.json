@@ -105,7 +105,7 @@
             }
         },
        {
-               "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+               "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "MLBehaviorAnalytics",
                "apiVersion": "2021-03-01-preview",           
                "properties": {
@@ -115,7 +115,7 @@
                }
        },
        {
-               "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+               "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "Fusion",
                "apiVersion": "2021-03-01-preview",           
                "properties": {
@@ -125,7 +125,7 @@
                }
        },
        {
-               "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+               "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "MicrosoftSecurityIncidentCreation",
                "apiVersion": "2021-03-01-preview",           
                "properties": {
