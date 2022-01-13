@@ -7,7 +7,7 @@
     },
     "parameters": {
         "PlaybookName": {
-            "defaultValue": "Change-Incident-Severity-High",
+            "defaultValue": "Change-Incident-Severity-Medium",
             "type": "string"
         },
         "UserName": {
