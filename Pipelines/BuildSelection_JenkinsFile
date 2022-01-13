@@ -45,7 +45,9 @@ def decideBuild(String modifications){
                     //The webhook ability to deploy analytic rules is only provided with ARM templates
                     //The relevant scripts are available, and analytic rules can be deployed manually from the pipeline when non ARM templates are used
                     //The approach is taken to discourage the usage of non ARM templates which otherwise provides multitude of parameter support
+                    //For Local testing, the non ARM line below can be uncommented, and the ARM line can be commented.
                         jenkinsFileSelected = "Pipelines/AnalyticsRulesCICD_ARM_JenkinsFile"
+                       //jenkinsFileSelected = "Pipelines/AnalyticsRulesCICD_JenkinsFile"
                     }
                     else if ("${modifications}".toLowerCase().contains('hunting')){
                         jenkinsFileSelected = "Pipelines/HuntingRulesCICD_JenkinsFile"
