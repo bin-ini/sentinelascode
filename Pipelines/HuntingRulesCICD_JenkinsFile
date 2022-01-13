@@ -44,7 +44,6 @@ pipeline{
        stage('deploy') {
            steps {
                  pwsh ( returnStatus: true, script: "&./Scripts/CreateHuntingRulesAPI.ps1 -Workspace ${Sentinel_Workspace} -RulesFile ${huntingRulesFile}")
-                 echo "Deployed Hunting Rules successfully"
                }
         }
         stage('clean') {
