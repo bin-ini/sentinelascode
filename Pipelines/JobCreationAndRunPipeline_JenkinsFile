@@ -90,11 +90,12 @@ def decideBuild(String modifications){
                     //provide owner permission to the specific files so that pipelines can be run as part of the newly created Job
                     pwsh 'ICACLS "./Jobs/PipelineJob.groovy" /setowner "administrator"'
                     
+                   script{
                     //Creating a parametrized Job, with dynamic build pipeline
-                    jobDsl targets: "./Jobs/PipelineJob.groovy",
-                           removedJobAction: 'DELETE',
-                           removedViewAction: 'DELETE',
-                           //lookupStrategy: 'SEED_JOB',
-                           additionalParameters: [jenkinsFileSelected: "${jenkinsFileSelected}", repositoryUrl:"${repositoryUrl}"]                                
-                           
+                       jobDsl targets: "./Jobs/PipelineJob.groovy",
+                              removedJobAction: 'DELETE',
+                              removedViewAction: 'DELETE',
+                              //lookupStrategy: 'SEED_JOB',
+                              additionalParameters: [jenkinsFileSelected: "${jenkinsFileSelected}", repositoryUrl:"${repositoryUrl}"]        
+                   }
 }
