@@ -40,9 +40,12 @@ def decideBuild(String modifications){
                     if(null=="${modifications}"){
                          error "No Relevant File Selected which should trigger build- something went wrong"
                     }
-
+                   
                     if("${modifications}".toLowerCase().contains('analytics')){
-                        jenkinsFileSelected = "Pipelines/AnalyticsRulesCICD_JenkinsFile"
+                    //The webhook ability to deploy analytic rules is only provided with ARM templates
+                    //The relevant scripts are available, and analytic rules can be deployed manually from the pipeline when non ARM templates are used
+                    //The approach is taken to discourage the usage of non ARM templates which otherwise provides multitude of parameter support
+                        jenkinsFileSelected = "Pipelines/AnalyticsRulesCICD_ARM_JenkinsFile"
                     }
                     else if ("${modifications}".toLowerCase().contains('hunting')){
                         jenkinsFileSelected = "Pipelines/HuntingRulesCICD_JenkinsFile"
