@@ -105,7 +105,8 @@
             }
         },
        {
-                "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/6d7c178b-a95e-4def-825c-1dfa88beb97f')]",
+              "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/6d7c178b-a95e-4def-825c-1dfa88beb95f')]",
+               "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/6d7c178b-a95e-4def-825c-1dfa88beb95f')]",
                "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "MLBehaviorAnalytics",
                "apiVersion": "2021-03-01-preview",           
@@ -116,7 +117,8 @@
                }
        },
        {
-                "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/6d7c178b-a95e-4def-825c-1dfa88beb97f')]",             
+               "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/6d7c178b-a95e-4def-825c-1dfa88beb94f')]",
+               "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/6d7c178b-a95e-4def-825c-1dfa88beb94f')]",             
                "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "Fusion",
                "apiVersion": "2021-03-01-preview",           
@@ -127,7 +129,8 @@
                }
        },
        {
-               "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/6d7c178b-a95e-4def-825c-1dfa88beb97f')]",
+               "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/6d7c178b-a95e-4def-825c-1dfa88beb93f')]",
+               "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/6d7c178b-a95e-4def-825c-1dfa88beb93f')]",
                "type": "Microsoft.SecurityInsights/alertRules",
                "kind": "MicrosoftSecurityIncidentCreation",
                "apiVersion": "2021-03-01-preview",           
