@@ -14,11 +14,11 @@
             "kind": "Scheduled",
             "apiVersion": "2021-03-01-preview",
             "properties": {
-                "displayName": "RuleName",
+                "displayName": "AlertRule01Test",
                 "description": "RuleDescription",
                 "severity": "High",
                 "enabled": true,
-                "query": "SecurityEvent",
+                "query": "SecurityEvent | where EventID == \"4688\" | where CommandLine contains \"-noni -ep bypass $\"",
                 "queryFrequency": "PT5H",
                 "queryPeriod": "PT6H",
                 "triggerOperator": "GreaterThan",
@@ -31,13 +31,62 @@
                 ],
                 "alertRuleTemplateName": null,
                 "incidentConfiguration": {
-                    "createIncident": false,
+                    "createIncident": true,
                     "groupingConfiguration": {
                         "enabled": false,
                         "reopenClosedIncident": false,
                         "lookbackDuration": "PT5H",
                         "matchingMethod": "AllEntities",
-                        "groupByEntities": [],
+                        "groupByEntities": ["Account","Ip","Host","Url"],
+                        "groupByAlertDetails": [],
+                        "groupByCustomDetails": []
+                    }
+                },
+                "eventGroupingSettings": {
+                    "aggregationKind": "SingleAlert"
+                },
+                "alertDetailsOverride": {
+                    "alertDisplayNameFormat": "DisplayNAme",
+                    "alertDescriptionFormat": "Description",
+                    "alertTacticsColumnName": "AdditionalInfo2",
+                    "alertSeverityColumnName": "AdditionalInfo"
+                },
+                "customDetails": null,
+                "entityMappings": null
+            }
+        },
+       {
+            "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/6d7c178b-a95e-4def-825c-1dfa88beb98f')]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/6d7c178b-a95e-4def-825c-1dfa88beb98f')]",
+            "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+            "kind": "Scheduled",
+            "apiVersion": "2021-03-01-preview",
+            "properties": {
+                "displayName": "AlertRule02Test",
+                "description": "RuleDescription",
+                "severity": "Medium",
+                "enabled": true,
+                "query": "SecurityEvent | where EventID == \"4688\" | where CommandLine contains \"-noni -ep bypass $\"",
+                "queryFrequency": "PT5H",
+                "queryPeriod": "PT6H",
+                "triggerOperator": "GreaterThan",
+                "triggerThreshold": 5,
+                "suppressionDuration": "PT1H",
+                "suppressionEnabled": false,
+                "tactics": [
+                    "Persistence",
+                    "LateralMovement",
+                    "Collection"
+                ],
+                "alertRuleTemplateName": null,
+                "incidentConfiguration": {
+                    "createIncident": true,
+                    "groupingConfiguration": {
+                        "enabled": false,
+                        "reopenClosedIncident": false,
+                        "lookbackDuration": "PT5H",
+                        "matchingMethod": "AllEntities",
+                        "groupByEntities": ["Account","Ip","Host","Url"],
                         "groupByAlertDetails": [],
                         "groupByCustomDetails": []
                     }
