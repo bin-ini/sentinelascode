@@ -45,7 +45,6 @@ pipeline{
         stage('deploy') {
            steps {
                  pwsh ( returnStatus: true, script: "&./Scripts/CreateAnalyticsRulesARM.ps1 -Workspace ${Sentinel_Workspace} -ResourceGroup ${ResourceGroup} -AnalyticsRulesFolder ${AnalyticsRulesFolder}" )
-                 echo "Deployed Alert Rules successfully"
                }
         }
         stage('clean') {
