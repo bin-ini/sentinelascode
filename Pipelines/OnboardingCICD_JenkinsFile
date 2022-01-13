@@ -44,7 +44,6 @@ pipeline{
         stage('deploy') {
            steps {
                  pwsh ( returnStatus: true, script: "&./Scripts/InstallSentinel.ps1 -OnboardingFile ${OnboardingFile}")
-                 echo "Deployed Microsoft Sentinel successfully"
                }
         }
         stage('clean') {
