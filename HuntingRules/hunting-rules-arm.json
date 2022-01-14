@@ -38,7 +38,7 @@
             "properties": {
                 "etag": "*",
                 "Category": "Hunting Queries",
-                "DisplayName": "[parameters('HuntingRule01')]", 
+                "DisplayName": "HuntingRule01", 
                 "Query": "SecurityEvent | where EventID == \"4687\" | where CommandLine contains \"-noni -ep bypass $\"",
                 "Tags": [
                     {
@@ -47,8 +47,7 @@
                     },
                     {
                         "Name": "tactics",
-                        "Value":  [
-                                  "Persistence",
+                        "Value":  ["Persistence",
                                   "LateralMovement",
                                   "Collection"
                                 ]
@@ -63,7 +62,7 @@
             "properties": {
                 "etag": "*",
                 "Category": "Hunting Queries",
-                "DisplayName": "[parameters('HuntingRule02')]", 
+                "DisplayName": "HuntingRule02", 
                 "Query": "SecurityEvent | where EventID == \"4688\" | where CommandLine contains \"-noni -ep bypass $\"",
                 "Tags": [
                     {
@@ -72,8 +71,7 @@
                     },
                     {
                         "Name": "tactics",
-                        "Value":  [
-                                  "Persistence",
+                        "Value":  ["Persistence",
                                   "LateralMovement"
                                 ]
                     }
