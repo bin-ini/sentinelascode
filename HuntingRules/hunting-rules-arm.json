@@ -1,83 +1,40 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "workspace": {
-            "type": "String"
-        },
-        "query_id": {
-            "defaultValue": "[newGuid()]",
-            "type": "String"
-        },
-        "displayname": {
-            "type": "string",
-            "metadata": {
-                "description": "Name for your hunting query"
-            }
-        },
-        "query": {
-            "type": "string",
-            "metadata": {
-                "description": "Type your query here (f.e. SigninLogs | take 10)"
-            }
-        },
-        "tactics": {
-            "type": "String",
-            "metadata": {
-                "description": "Allowed value is a comma separated subset of the following values: DefenseEvasion, Impact, CommandAndControl, Collection, LateralMovement, PreAttack, Exfiltration, Discovery, CredentialAccess, PrivilegeEscalation, Persistence, Execution, InitialAccess"
-            }
-        }
-    },
-    "functions": [],
-    "variables": {},
-    "resources": [
-        {
-            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
-            "apiVersion": "2020-08-01",
-            "name": "[concat(parameters('workspace'), '/',parameters('query_id'))]",
-            "properties": {
-                "etag": "*",
-                "Category": "Hunting Queries",
-                "DisplayName": "HuntingRule01", 
-                "Query": "SecurityEvent | where EventID == \"4687\" | where CommandLine contains \"-noni -ep bypass $\"",
-                "Tags": [
-                    {
-                        "Name": "description",
-                        "Value": "test"
-                    },
-                    {
-                        "Name": "tactics",
-                        "Value":  ["Persistence",
-                                  "LateralMovement",
-                                  "Collection"
-                                ]
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
-            "apiVersion": "2020-08-01",
-            "name": "[concat(parameters('workspace'), '/',parameters('query_id'))]",
-            "properties": {
-                "etag": "*",
-                "Category": "Hunting Queries",
-                "DisplayName": "HuntingRule02", 
-                "Query": "SecurityEvent | where EventID == \"4688\" | where CommandLine contains \"-noni -ep bypass $\"",
-                "Tags": [
-                    {
-                        "Name": "description",
-                        "Value": "test"
-                    },
-                    {
-                        "Name": "tactics",
-                        "Value":  ["Persistence",
-                                  "LateralMovement"
-                                ]
-                    }
-                ]
-            }
-        }
-    ],
-    "outputs": {}
+  "$schema": https: //schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#,
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspace": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2020-08-01",
+      "name": "[concat(parameters('workspace'), '/5c70f7ea-3ebf-459f-a3e0-0d735686380c')]",
+      "properties": {
+        "category": "Hunting Queries",
+        "displayName": "adding credentials to legitimate OAuth Applications",
+        "query": "AuditLogs\n| where OperationName has_any (\"Add service principal\", \"Certificates and secrets management\") // captures \"Add service principal\", \"Add service principal credentials\", and \"Update application – Certificates and secrets management\" events\n| where Result =~ \"success\"\n| mv-expand target = TargetResources \n| where tostring(InitiatedBy.user.userPrincipalName) has \"@\" or tostring(InitiatedBy.app.displayName) has \"@\"\n| extend targetDisplayName = tostring(TargetResources[0].displayName)\n| extend targetId = tostring(TargetResources[0].id)\n| extend targetType = tostring(TargetResources[0].type)\n| extend keyEvents = TargetResources[0].modifiedProperties\n| mv-expand keyEvents\n| where keyEvents.displayName =~ \"KeyDescription\"\n| extend set1 = parse_json(tostring(keyEvents.newValue))\n| extend set2 = parse_json(tostring(keyEvents.oldValue))\n| extend diff = set_difference(set1, set2)\n| where isnotempty(diff)\n| parse diff with * \"KeyIdentifier=\" keyIdentifier: string \",KeyType=\" keyType: string \",KeyUsage=\" keyUsage: string \",DisplayName=\" keyDisplayName: string \"]\" *\n| where keyUsage == \"Verify\"\n    or keyUsage == \"\"\n| extend UserAgent = iff(AdditionalDetails[0].key == \"User-Agent\", tostring(AdditionalDetails[0].value), \"\")\n| extend InitiatingUserOrApp = iff(isnotempty(InitiatedBy.user.userPrincipalName), tostring(InitiatedBy.user.userPrincipalName), tostring(InitiatedBy.app.displayName))\n| extend InitiatingIpAddress = iff(isnotempty(InitiatedBy.user.ipAddress), tostring(InitiatedBy.user.ipAddress), tostring(InitiatedBy.app.ipAddress))\n// \n// The below line is currently commented out but Azure Sentinel users can modify this query to show only Application or only Service Principal events in their environment\n//| where targetType =~ \"Application\" // or targetType =~ \"ServicePrincipal\"\n| project-away diff, set1, set2\n| project-reorder\n    TimeGenerated,\n    OperationName,\n    InitiatingUserOrApp,\n    InitiatingIpAddress,\n    UserAgent,\n    targetDisplayName,\n    targetId,\n    targetType,\n    keyDisplayName,\n    keyType,\n    keyUsage,\n    keyIdentifier,\n    CorrelationId\n| extend\n    timestamp = TimeGenerated,\n    AccountCustomEntity = InitiatingUserOrApp,\n    IPCustomEntity = InitiatingIpAddress",
+        "tags": [
+          {
+            "name": "description",
+            "value": "This query looks for Applications or Service Principals where new Key Credentials were added. This has been used by attackers to gain persistent access and elevate privileges."
+          },
+          {
+            "name": "tactics",
+            "value": "Persistence"
+          },
+          {
+            "name": "createdBy",
+            "value": test@microsoft.com
+          },
+          {
+            "name": "createdTimeUtc",
+            "value": "08/08/2021 09:22:10"
+          }
+        ],
+        "version": 2
+      }
+    }
+  ]
 }
