@@ -14,7 +14,7 @@
             "kind": "Scheduled",
             "apiVersion": "2021-03-01-preview",
             "properties": {
-                "displayName": "AlertRule02Test",
+                "displayName": "AlertRule01Test",
                 "description": "RuleDescription",
                 "severity": "High",
                 "enabled": true,
